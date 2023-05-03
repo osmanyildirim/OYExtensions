@@ -55,6 +55,11 @@ extension UIView {
             self.alpha = 0
         }
     }
+    
+    /// Determines whether user events are ignored and removed from the event queue
+    public func oy_isEnableOrDisable(isEnable: Bool) {
+        isUserInteractionEnabled = isEnable
+    }
 
     /// Remove UIView with animation
     public func oy_remove(animated: Bool = false) {

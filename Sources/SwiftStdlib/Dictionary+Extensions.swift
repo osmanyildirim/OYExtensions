@@ -81,6 +81,13 @@ extension Dictionary {
     public mutating func oy_append (_ rhs: [Key: Value]) {
         rhs.forEach { self[$0] = $1 }
     }
+    
+    /// var dict = ["Key1": ["Value1", "Value2"]]
+    /// `dict.oy_append(key: "Key1", array: ["Value3", "Value4"])` → output → ["Key1": ["Value1", "Value2", "Value3", "Value4"]]
+    /// `dict.oy_append(key: "Key2", array: ["Value5", "Value6"])` → output → ["Key1": ["Value1", "Value2"], "Key2": ["Value5", "Value6"]]
+    public mutating func oy_append<T>(key: Key, array: [T]) where Value == [T] {
+        self[key] == nil ? self[key] = array: self[key]?.append(contentsOf: array)
+    }
 
     /// var dict = ["Key1": "Value1", "Key2": "Value2", "Key3": "Value3"]
     /// var dict_2 = ["Key4": "Value4", "Key5": "Value5", "Key6": "Value6"]
@@ -115,8 +122,14 @@ extension Dictionary {
 
     /// var dict = ["Key1": "Value1", "Key2": "Value2", "Key3": "Value3"]
     /// `dict.oy_remove(keys: ["Key1", "Key2"])` → output → ["Key3": "Value3"]
-    public mutating func oy_remove<S: Sequence>(keys: S) where S.Element == Key {
+    public mutating func oy_remove(keys: Key...) {
         keys.forEach { removeValue(forKey: $0) }
+    }
+    
+    /// var dict = ["Key1": ["Value1", "Value2"]]
+    /// `dict.oy_removeValue(key: "Key1", value: "Value2")` → output → ["Key1": ["Value1"]]
+    public mutating func oy_removeValue<T: Equatable>(key: Key, value: T) where Value == [T] {
+        self[key]?.removeAll(where: { $0 == value })
     }
 
     /// var dict = ["Key1": "Value1", "Key2": "Value2", "Key3": "Value3"]
@@ -157,7 +170,7 @@ extension Dictionary {
     }
     
     /// var dict = ["Key1": "Value1", "Key2": "Value2", "Key3": "Value3"]
-    /// `dict.oy_allKeys` → output  → ["Value1", "Value2", "Value3"]
+    /// `dict.oy_allValues` → output  → ["Value1", "Value2", "Value3"]
     public var oy_allValues: [Value] {
         values.compactMap({ $0 })
     }

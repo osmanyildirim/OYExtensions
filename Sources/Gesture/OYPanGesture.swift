@@ -16,11 +16,15 @@ import UIKit
 ///         }
 ///         sampleView.addGestureRecognizer(panGesture)
 ///
+/// Remove Pan gesture:
+///
+///         panGesture.remove()
+///
 
-final class OYPanGesture: UIPanGestureRecognizer {
+public final class OYPanGesture: UIPanGestureRecognizer, OYBaseGesture {
     private var panAction: (() -> Void)?
 
-    convenience init(completion: (() -> Void)?) {
+    public convenience init(completion: (() -> Void)?) {
         self.init()
         panAction = completion
         addTarget(self, action: #selector(didPan))

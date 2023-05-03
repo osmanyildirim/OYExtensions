@@ -12,6 +12,11 @@ extension DispatchQueue {
     public static var oy_isMainQueue: Bool {
         self === DispatchQueue.main && Thread.isMainThread
     }
+    
+    /// `DispatchQueue.oy_currentThread`→ output → <_NSMainThread: 0x60000254cb40>{number = 1, name = main}
+    public static var oy_currentThread: Thread {
+        Thread.current
+    }
 
     /// `DispatchQueue.oy_asyncOnMain { }`
     public static func oy_asyncOnMain(_ execute: @escaping @convention(block) () -> Void) {

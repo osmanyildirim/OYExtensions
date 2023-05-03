@@ -86,7 +86,7 @@ extension UIImage {
     /// Compress quality of UIImage
     /// - Parameter quality: compression quality
     /// - Returns: optional UIImage
-    public func oy_compress(quality: CGFloat = 0.5) -> UIImage? {
+    public func oy_compressed(quality: CGFloat = 0.5) -> UIImage? {
         guard let data = jpegData(compressionQuality: quality) else { return nil }
         return UIImage(data: data)
     }
@@ -94,7 +94,7 @@ extension UIImage {
     /// Compress quality of UIImage
     /// - Parameter quality: compression quality
     /// - Returns: optional Data
-    public func oy_compress(quality: CGFloat = 0.5) -> Data? {
+    public func oy_compressed(quality: CGFloat = 0.5) -> Data? {
         jpegData(compressionQuality: quality)
     }
 }

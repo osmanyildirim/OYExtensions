@@ -8,7 +8,7 @@
 import UIKit
 
 extension UITextView {
-    typealias ViewType = UITextView
+    public typealias ViewType = UITextView
 
     /// Initializer method with `text, isEditable and isSelectable` values
     public static func oy_init(text: String, isEditable: Bool = false, isSelectable: Bool = false) -> UITextView {
@@ -26,6 +26,27 @@ extension UITextView {
         let positiveTopOffset = max(1, topOffset)
         contentOffset.y = -positiveTopOffset
     }
+    
+    /// Wrap UITextView's content
+    public func oy_wrapToContent() {
+        contentInset = UIEdgeInsets.zero
+        scrollIndicatorInsets = UIEdgeInsets.zero
+        contentOffset = CGPoint.zero
+        textContainerInset = UIEdgeInsets.zero
+        textContainer.lineFragmentPadding = 0
+        sizeToFit()
+    }
+    
+    /// Set frame by estimated height of UITextView
+    public func oy_setFitHeight(width: CGFloat) {
+        if isScrollEnabled { isScrollEnabled = false }
+
+        frame.oy_width = width
+        sizeToFit()
+        if frame.width != width {
+            frame.oy_width = width
+        }
+    }
 
     /// Clear UITextView's text and attributed text
     public func oy_clear() {
@@ -41,16 +62,6 @@ extension UITextView {
             range = position == .top ? NSRange(location: text.count - 1, length: 1) : NSRange(location: 0, length: 1)
         }
         scrollRangeToVisible(range)
-    }
-
-    /// Wrap UITextView's content
-    public func oy_wrapToContent() {
-        contentInset = UIEdgeInsets.zero
-        scrollIndicatorInsets = UIEdgeInsets.zero
-        contentOffset = CGPoint.zero
-        textContainerInset = UIEdgeInsets.zero
-        textContainer.lineFragmentPadding = 0
-        sizeToFit()
     }
 
     /// Add right padding for UITextView

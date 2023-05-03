@@ -1,9 +1,9 @@
 Pod::Spec.new do |s|
   s.name                      = "OYExtensions"
-  s.version                   = "1.0"
+  s.version                   = "1.0.1"
   s.summary                   = "Some useful extension for Swift"
 
-  s.homepage                  = "github.com/osmanyildirim"
+  s.homepage                  = "https://github.com/osmanyildirim/OYExtensions.git"
   s.license                   = { :type => "MIT", :file => "LICENSE" }
   s.author                    = { "osmanyildirim" => "github.com/osmanyildirim" }
 

@@ -26,17 +26,17 @@ extension UIWindow {
         UIScreen.main.bounds.width
     }
 
-    /// `UIWindow.oy_width` → output → 932
+    /// `UIWindow.oy_height` → output → 932
     public static var oy_height: CGFloat {
         UIScreen.main.bounds.height
     }
 
-    /// `UIWindow.oy_width` → output → 59
+    /// `UIWindow.oy_safeAreaTop` → output → 59
     public static var oy_safeAreaTop: CGFloat {
         UIApplication.oy_keyWindow?.safeAreaInsets.top ?? 0
     }
 
-    /// `UIWindow.oy_width` → output → 34
+    /// `UIWindow.oy_safeAreaBottom` → output → 34
     public static var oy_safeAreaBottom: CGFloat {
         UIApplication.oy_keyWindow?.safeAreaInsets.bottom ?? 0
     }

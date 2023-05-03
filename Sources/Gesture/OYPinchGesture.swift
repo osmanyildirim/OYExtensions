@@ -16,11 +16,15 @@ import UIKit
 ///         }
 ///         sampleView.addGestureRecognizer(pinchGesture)
 ///
+/// Remove Pinch gesture:
+///
+///         pinchGesture.remove()
+///
 
-final class OYPinchGesture: UIPinchGestureRecognizer {
+public final class OYPinchGesture: UIPinchGestureRecognizer, OYBaseGesture {
     private var pinchAction: (() -> Void)?
 
-    convenience init(completion: (() -> Void)?) {
+    public convenience init(completion: (() -> Void)?) {
         self.init()
         pinchAction = completion
         addTarget(self, action: #selector(didPinch))

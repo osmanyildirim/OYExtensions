@@ -101,6 +101,16 @@ extension UIScrollView {
         frame = previousFrame
         return UIGraphicsGetImageFromCurrentImageContext()
     }
+    
+    /// Hide keyboard when scrolling
+    /// - Parameter when: KeyboardDismissMode
+    /// • onDrag: dismisses the keyboard when a drag begins
+    /// • interactive: the keyboard follows the dragging touch off screen, and may be pulled upward again to cancel the dismiss
+    /// • onDragWithAccessory: dismisses both keyboard and accessory in the style of UIScrollViewKeyboardDismissModeOnDrag
+    /// • interactiveWithAccessory: dismisses both keyboard and accessory in the style of UIScrollViewKeyboardDismissModeInteractive
+    public func oy_keyboardDismiss(when: KeyboardDismissMode) {
+        keyboardDismissMode = when
+    }
 }
 
 extension UIScrollView {

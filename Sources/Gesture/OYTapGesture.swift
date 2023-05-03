@@ -7,7 +7,7 @@
 
 import UIKit
 
-/// Pan gesture with `tapCount, touchCount, completion handler`
+/// Tap gesture with `tapCount, touchCount, completion handler`
 ///
 /// Usage:
 ///
@@ -16,11 +16,15 @@ import UIKit
 ///         }
 ///         sampleView.addGestureRecognizer(tapGesture)
 ///
+/// Remove Tap gesture
+///
+///         tapGesture.remove()
+///
 
-final class OYTapGesture: UITapGestureRecognizer {
+public final class OYTapGesture: UITapGestureRecognizer, OYBaseGesture {
     private var tapAction: (() -> Void)?
 
-    convenience init(tapCount: Int = 1, touchCount: Int = 1, completion: (() -> Void)?) {
+    public convenience init(tapCount: Int = 1, touchCount: Int = 1, completion: (() -> Void)?) {
         self.init()
         numberOfTapsRequired = tapCount
 

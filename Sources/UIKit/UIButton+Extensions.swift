@@ -171,6 +171,11 @@ extension UIButton: OYInit {
             closure()
         }
     }
+    
+    /// remove the target/action for a set of events
+    public func oy_removeTargetsAndActions() {
+        removeTarget(nil, action: nil, for: .allEvents)
+    }
 
     /// Private method of UIButton background color setters
     private func oy_setBackgroundColor(_ color: UIColor?, for state: UIControl.State = .normal) {

@@ -49,49 +49,59 @@ extension UINavigationController {
     public func oy_hide(animated: Bool = true) {
         navigationController?.setNavigationBarHidden(true, animated: animated)
     }
-
-    /// Set navigation bar's background color and text color
-    public func oy_set(backgroundColor: UIColor, textColor: UIColor) {
-        navigationBar.isTranslucent = false
-        navigationBar.backgroundColor = backgroundColor
-        navigationBar.barTintColor = backgroundColor
-        navigationBar.setBackgroundImage(UIImage(), for: .default)
-        navigationBar.tintColor = textColor
-        navigationBar.titleTextAttributes = [.foregroundColor: textColor]
+    
+    /// Hide navigation controller bars when the keyboard appears
+    public func oy_hideWhenKeyboardAppears(_ isHide: Bool) {
+        hidesBarsWhenKeyboardAppears = isHide
     }
 
-    /// Set navigation bar's transparency with tint color
-    public func oy_setTransparent(tintColor: UIColor) {
-        navigationBar.setBackgroundImage(UIImage(), for: .default)
-        navigationBar.shadowImage = UIImage()
-        navigationBar.isTranslucent = true
-        navigationBar.tintColor = tintColor
-        navigationBar.titleTextAttributes = [.foregroundColor: tintColor]
+    /// Get and Set translucent
+    public var oy_isTranslucent: Bool {
+        get {
+            navigationBar.isTranslucent
+        }
+        set(value) {
+            navigationBar.isTranslucent = value
+        }
     }
-
-    /// Get and Set title color for UINavigationBar
+    
+    /// Get and Set title
+    public var oy_title: String {
+        get {
+            navigationBar.oy_title
+        }
+        set(value) {
+            navigationBar.oy_title = value
+        }
+    }
+    
+    /// Get and Set title color
     public var oy_titleColor: UIColor? {
         get {
-            return navigationBar.titleTextAttributes?[.foregroundColor] as? UIColor
+            navigationBar.oy_titleColor
         }
-        set {
-            if navigationBar.titleTextAttributes == nil {
-                navigationBar.titleTextAttributes = [:]
-            }
-            navigationBar.titleTextAttributes?[.foregroundColor] = newValue
+        set(value) {
+            navigationBar.oy_titleColor = value
+        }
+    }
+    
+    /// Get and Set background color
+    public var oy_backgroundColor: UIColor? {
+        get {
+            navigationBar.oy_backgroundColor
+        }
+        set(value) {
+            navigationBar.oy_backgroundColor = value
         }
     }
 
-    /// Get and Set title font for UINavigationBar
+    /// Get and Set title font
     public var oy_titleFont: UIFont? {
         get {
-            return navigationBar.titleTextAttributes?[.font] as? UIFont
+            navigationBar.oy_font
         }
-        set {
-            if navigationBar.titleTextAttributes == nil {
-                navigationBar.titleTextAttributes = [:]
-            }
-            navigationBar.titleTextAttributes?[.font] = newValue
+        set(value) {
+            navigationBar.oy_font = value
         }
     }
 

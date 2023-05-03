@@ -47,4 +47,9 @@ extension UIScreen {
     public static var oy_isRetinaHD: Bool {
         main.responds(to: #selector(displayLink(withTarget: selector:))) && main.scale == 3.0
     }
+
+    /// `UIScreen.oy_adjustBrightness(value: 0.5)`
+    public static func oy_adjustBrightness(value: CGFloat) {
+        UIScreen.main.brightness = value
+    }
 }

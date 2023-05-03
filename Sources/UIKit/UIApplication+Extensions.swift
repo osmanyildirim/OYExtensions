@@ -103,9 +103,9 @@ extension UIApplication {
     public static var oy_keyWindow: UIWindow? {
         if #available(iOS 13.0, *) {
             return UIApplication.shared.connectedScenes.filter { $0.activationState == .foregroundActive }
-                .first(where: { $0 is UIWindowScene })
-                .flatMap({ $0 as? UIWindowScene })?.windows
-                .first(where: \.isKeyWindow)
+                                                       .first(where: { $0 is UIWindowScene })
+                                                       .flatMap({ $0 as? UIWindowScene })?.windows
+                                                       .first(where: \.isKeyWindow)
         } else {
             return UIApplication.shared.keyWindow
         }
@@ -140,29 +140,26 @@ extension UIApplication {
 
     /// `UIApplication.oy_topViewController` → output → <UINavigationController: 0x13f81f600>
     public static var oy_topViewController: UIViewController? {
-        get {
-            let window = oy_keyWindow
+        get { oy_topViewController() }
+        set(value) { oy_keyWindow?.rootViewController = value }
+    }
+    
+    /// `UIApplication.oy_topViewController()` → output → <UINavigationController: 0x13f81f600>
+    private static func oy_topViewController(base: UIViewController? = UIViewController.oy_root) -> UIViewController? {
+        var topViewController: UIViewController?
 
-            if #available(iOS 13, *) {
-                if var rootViewController = window?.rootViewController {
-                    while let presentedViewController = rootViewController.presentedViewController {
-                        rootViewController = presentedViewController
-                    }
-                    return rootViewController
-                }
-            } else {
-                if var rootViewController = window?.rootViewController {
-                    while let presentedViewController = rootViewController.presentedViewController {
-                        rootViewController = presentedViewController
-                    }
-                    return rootViewController
-                }
-            }
-            return nil
+        if base == nil {
+            return oy_topViewController(base: UIViewController.oy_root)
         }
-        set {
-            oy_keyWindow?.rootViewController = newValue
+        
+        if let navigationController = base as? UINavigationController {
+            topViewController = oy_topViewController(base: navigationController.visibleViewController)
+        } else if let tabBarController = base as? UITabBarController, let selectedViewController = tabBarController.selectedViewController {
+            topViewController = oy_topViewController(base: selectedViewController)
+        } else {
+            return base?.presentedViewController ?? base
         }
+        return topViewController
     }
 
     /// `UIApplication.oy_observeScreenShot { }`
@@ -224,7 +221,7 @@ extension UIApplication {
             config.entersReaderIfAvailable = entersReaderIfAvailable
 
             let safariViewController = SFSafariViewController(url: url, configuration: config)
-            oy_topViewController?.present(safariViewController, animated: true)
+            oy_topViewController()?.present(safariViewController, animated: true)
         } else {
             throw OYError.urlIsNotValid
         }

@@ -1,13 +1,13 @@
-<p align="left">
-  <img src="Assets/Banner.png" title="OYExtensions">
-</p>
-
 [![Cocoapods](https://img.shields.io/cocoapods/v/OYExtensions.svg)](https://cocoapods.org/pods/OYExtensions)
 [![SPM compatible](https://img.shields.io/badge/SPM-Compatible-red.svg?style=flat)](https://swift.org/package-manager/)
 [![Platforms](https://img.shields.io/badge/platforms-iOS%20%7C%20watchOS-yellow.svg)](https://github.com/osmanyildirim/OYExtensions)
 [![Swift](https://img.shields.io/badge/Swift-5.7-orange.svg)](https://swift.org)
 [![Xcode](https://img.shields.io/badge/Xcode-14.2-blue.svg)](https://developer.apple.com/xcode)
 [![MIT](https://img.shields.io/badge/License-MIT-lightgray.svg)](https://opensource.org/licenses/MIT)
+
+<p align="left">
+  <img src="Assets/Banner.png" title="OYExtensions">
+</p>
 
 Some useful extension for Swift
 
@@ -40,6 +40,7 @@ pod 'OYExtensions'
   <summary>Swift Package Manager</summary>
   <br/>
 Add OYExtensions as a dependency to your <code>Package.swift</code> and specify OYExtensions as a target dependency:
+  <br/>
 
 ```swift
 import PackageDescription
@@ -66,7 +67,7 @@ let package = Package(
 <details>
 <summary>Combine Extensions</summary>
 <ul>
-<li><a href="https://github.com/osmanyildirim/OYExtensions/blob/main/Sources/Combine/Combine%2BExtensions.swift"><code>Publisher extensions</code></a></li>
+<li><a href="https://github.com/osmanyildirim/OYExtensions/blob/main/Sources/Combine/Publisher%2BExtensions.swift"><code>Publisher extensions</code></a></li>
 </ul>
 </details>
 
@@ -150,10 +151,12 @@ let package = Package(
 <li><a href="https://github.com/osmanyildirim/OYExtensions/blob/main/Sources/UIKit/UIControl%2BExtensions.swift"><code>UIControl extensions</code></a></li>
 <li><a href="https://github.com/osmanyildirim/OYExtensions/blob/main/Sources/UIKit/UIDatePicker%2BExtensions.swift"><code>UIDatePicker extensions</code></a></li>
 <li><a href="https://github.com/osmanyildirim/OYExtensions/blob/main/Sources/UIKit/UIDevice%2BExtensions.swift"><code>UIDevice extensions</code></a></li>
+<li><a href="https://github.com/osmanyildirim/OYExtensions/blob/main/Sources/UIKit/UIFeedbackGenerator%2BExtensions.swift"><code>UIFeedbackGenerator extensions</code></a></li>
 <li><a href="https://github.com/osmanyildirim/OYExtensions/blob/main/Sources/UIKit/UIFont%2BExtensions.swift"><code>UIFont extensions</code></a></li>
 <li><a href="https://github.com/osmanyildirim/OYExtensions/blob/main/Sources/UIKit/UIImage%2BExtensions.swift"><code>UIImage extensions</code></a></li>
 <li><a href="https://github.com/osmanyildirim/OYExtensions/blob/main/Sources/UIKit/UIImageView%2BExtensions.swift"><code>UIImageView extensions</code></a></li>
 <li><a href="https://github.com/osmanyildirim/OYExtensions/blob/main/Sources/UIKit/UILabel%2BExtensions.swift"><code>UILabel extensions</code></a></li>
+<li><a href="https://github.com/osmanyildirim/OYExtensions/blob/main/Sources/UIKit/UINavigationBar%2BExtensions.swift"><code>UINavigationBar extensions</code></a></li>
 <li><a href="https://github.com/osmanyildirim/OYExtensions/blob/main/Sources/UIKit/UINavigationController%2BExtensions.swift"><code>UINavigationController extensions</code></a></li>
 <li><a href="https://github.com/osmanyildirim/OYExtensions/blob/main/Sources/UIKit/UIPasteboard%2BExtensions.swift"><code>UIPasteboard extensions</code></a></li>
 <li><a href="https://github.com/osmanyildirim/OYExtensions/blob/main/Sources/UIKit/UIPickerView%2BExtensions.swift"><code>UIPickerView extensions</code></a></li>
@@ -163,8 +166,11 @@ let package = Package(
 <li><a href="https://github.com/osmanyildirim/OYExtensions/blob/main/Sources/UIKit/UISearchBar%2BExtensions.swift"><code>UISearchBar extensions</code></a></li>
 <li><a href="https://github.com/osmanyildirim/OYExtensions/blob/main/Sources/UIKit/UISlider%2BExtensions.swift"><code>UISlider extensions</code></a></li>
 <li><a href="https://github.com/osmanyildirim/OYExtensions/blob/main/Sources/UIKit/UIStackView%2BExtensions.swift"><code>UIStackView extensions</code></a></li>
+<li><a href="https://github.com/osmanyildirim/OYExtensions/blob/main/Sources/UIKit/UISegmentedControl%2BExtensions.swift"><code>UISegmentedControl extensions</code></a></li>
 <li><a href="https://github.com/osmanyildirim/OYExtensions/blob/main/Sources/UIKit/UISwitch%2BExtensions.swift"><code>UISwitch extensions</code></a></li>
 <li><a href="https://github.com/osmanyildirim/OYExtensions/blob/main/Sources/UIKit/UITabBar%2BExtensions.swift"><code>UITabBar extensions</code></a></li>
+<li><a href="https://github.com/osmanyildirim/OYExtensions/blob/main/Sources/UIKit/UITabBarController%2BExtensions.swift"><code>UITabBarController extensions</code></a></li>
+<li><a href="https://github.com/osmanyildirim/OYExtensions/blob/main/Sources/UIKit/UITabBarItem%2BExtensions.swift"><code>UITabBarItem extensions</code></a></li>
 <li><a href="https://github.com/osmanyildirim/OYExtensions/blob/main/Sources/UIKit/UITableView%2BExtensions.swift"><code>UITableView extensions</code></a></li>
 <li><a href="https://github.com/osmanyildirim/OYExtensions/blob/main/Sources/UIKit/UITextField%2BExtensions.swift"><code>UITextField extensions</code></a></li>
 <li><a href="https://github.com/osmanyildirim/OYExtensions/blob/main/Sources/UIKit/UITextView%2BExtensions.swift"><code>UITextView extensions</code></a></li>

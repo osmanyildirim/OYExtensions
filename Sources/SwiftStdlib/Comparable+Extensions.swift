@@ -16,4 +16,10 @@ extension Comparable {
     public func oy_isBetween(_ range: ClosedRange<Self>) -> Bool {
         range ~= self
     }
+    
+    /// `5.oy_minValueOnRange(to: 0...1)` → output → 5
+    /// `0.5.oy_minValueOnRange(to: 0...1)` → output → 0.5
+    public func oy_minValueOnRange(to limits: ClosedRange<Self>) -> Self {
+        min(max(self, limits.lowerBound), limits.upperBound)
+    }
 }

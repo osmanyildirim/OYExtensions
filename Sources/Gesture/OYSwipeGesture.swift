@@ -16,11 +16,15 @@ import UIKit
 ///         }
 ///         sampleView.addGestureRecognizer(swipeGesture)
 ///
+/// Remove Swipe gesture:
+///
+///         swipeGesture.remove()
+///
 
-final class OYSwipeGesture: UISwipeGestureRecognizer {
+public final class OYSwipeGesture: UISwipeGestureRecognizer, OYBaseGesture {
     private var swipeAction: (() -> Void)?
 
-    convenience init(direction: UISwipeGestureRecognizer.Direction, touchCount: Int = 1, completion: (() -> Void)?) {
+    public convenience init(direction: UISwipeGestureRecognizer.Direction, touchCount: Int = 1, completion: (() -> Void)?) {
         self.init()
         self.direction = direction
 
