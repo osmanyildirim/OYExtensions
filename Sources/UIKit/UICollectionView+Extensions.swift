@@ -135,12 +135,7 @@ extension UICollectionView {
     ///   - scrollPosition: scroll position: top, bottom etc.
     ///   - animated: if the should be animated
     public func oy_scrollToItem(at indexPath: IndexPath, at scrollPosition: UICollectionView.ScrollPosition, animated: Bool) {
-        guard indexPath.item >= 0,
-            indexPath.section >= 0,
-            indexPath.section < numberOfSections,
-            indexPath.item < numberOfItems(inSection: indexPath.section) else {
-            return
-        }
+        guard oy_isValidIndexPath(indexPath) else { return }
         scrollToItem(at: indexPath, at: scrollPosition, animated: animated)
     }
 
@@ -158,5 +153,13 @@ extension UICollectionView {
             return IndexPath(item: 0, section: section)
         }
         return IndexPath(item: numberOfItems(inSection: section) - 1, section: section)
+    }
+    
+    /// Checks the validity of IndexPath of UICollectionView
+    func oy_isValidIndexPath(_ indexPath: IndexPath) -> Bool {
+        return indexPath.section >= 0 &&
+               indexPath.item >= 0 &&
+               indexPath.section < numberOfSections &&
+               indexPath.item < numberOfItems(inSection: indexPath.section)
     }
 }

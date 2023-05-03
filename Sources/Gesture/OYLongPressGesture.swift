@@ -16,11 +16,15 @@ import UIKit
 ///         }
 ///         sampleView.addGestureRecognizer(longPressGesture)
 ///
+/// Remove Long press gesture:
+///
+///         longPressGesture.remove()
+///
 
-final class OYLongPressGesture: UILongPressGestureRecognizer {
+public final class OYLongPressGesture: UILongPressGestureRecognizer, OYBaseGesture {
     private var longPressAction: (() -> Void)?
 
-    convenience init(completion: (() -> Void)?) {
+    public convenience init(completion: (() -> Void)?) {
         self.init()
         longPressAction = completion
         addTarget(self, action: #selector(didLongPress(_:)))

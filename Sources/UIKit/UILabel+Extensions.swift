@@ -49,17 +49,40 @@ extension UILabel: OYInit {
         sizeThatFits(CGSize(width: frame.width, height: .greatestFiniteMagnitude)).height
     }
 
-    /// Set fit width of UILabel
-    public func oy_fitWidth(minimumWidth: CGFloat? = nil) {
+    /// Set frame by estimated width of UILabel
+    public func oy_setFitWidth(minimumWidth: CGFloat? = nil) {
         let minimumWidth = minimumWidth ?? frame.width
         let width = oy_estimatedWidth < minimumWidth ? minimumWidth : oy_estimatedWidth
         frame.oy_width = width
     }
 
-    /// Set fit height of UILabel
-    public func oy_fitHeight(minimumHeight: CGFloat? = nil) {
+    /// Set frame by estimated height of UILabel
+    public func oy_setFitHeight(minimumHeight: CGFloat? = nil) {
         let minimumHeight = minimumHeight ?? frame.height
         let height = oy_estimatedHeight < minimumHeight ? minimumHeight : oy_estimatedHeight
         frame.oy_height = height
+    }
+    
+    /// Spaces between letters
+    public var oy_lettersSpace: CGFloat {
+        get {
+            if let attributedText = attributedText?.attribute(.kern, at: 0, effectiveRange: .none) as? CGFloat {
+                return attributedText
+            } else {
+                return 0
+            }
+        } set(value) {
+            let attributedString: NSMutableAttributedString?
+            if let attributedText {
+                attributedString = NSMutableAttributedString(attributedString: attributedText)
+            } else {
+                attributedString = NSMutableAttributedString(string: text ?? "")
+                text = nil
+            }
+            
+            guard let attributedString else { return }
+            attributedString.addAttribute(NSAttributedString.Key.kern, value: value, range: NSRange(location: 0, length: attributedString.length))
+            attributedText = attributedString
+        }
     }
 }

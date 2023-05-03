@@ -35,7 +35,7 @@ extension UIColor {
 
     /// `UIColor.oy_random`
     public static var oy_random: UIColor {
-        UIColor.oy_init(red: .oy_random, green: .oy_random, blue: .oy_random, alpha: .oy_random)
+        UIColor.oy_init(red: .random(in: 0..<1), green: .random(in: 0..<1), blue: .random(in: 0..<1))
     }
 
     /// `color.oy_rgba`→ output → (red: 173.0, green: 33.0, blue: 49.0, alpha: 1.0)
@@ -48,12 +48,26 @@ extension UIColor {
 
         return (red * 255, green * 255, blue * 255, alpha)
     }
+    
+    /// `UIColor.red.oy_hex`→ output → #FF0000
+    public var oy_hex: String {
+        let components = cgColor.components
+        let r: CGFloat = components?[0] ?? 0.0
+        let g: CGFloat = components?[1] ?? 0.0
+        let b: CGFloat = components?[2] ?? 0.0
+        
+        let hexString = String(format: "#%02lX%02lX%02lX", lroundf(Float(r * 255)), lroundf(Float(g * 255)), lroundf(Float(b * 255)))
+        return hexString
+    }
 
     /// `color.oy_alpha`→ output → 1.0
     public var oy_alpha: CGFloat {
-        var alpha: CGFloat = 0.0
-        getRed(nil, green: nil, blue: nil, alpha: &alpha)
-        return alpha
+        get {
+            var alpha: CGFloat = 0.0
+            getRed(nil, green: nil, blue: nil, alpha: &alpha)
+            return alpha
+        }
+        set(value) { withAlphaComponent(value) }
     }
 
     /// `color.oy_red`→ output → 173.0
@@ -80,13 +94,13 @@ extension UIColor {
         return blue * 255
     }
 
-    /// `color.oy_dark`
-    @available(iOS 13.0, *) public var oy_dark: UIColor {
+    /// `color.oy_darkModeColor`
+    @available(iOS 13.0, *) public var oy_darkModeColor: UIColor {
         resolvedColor(with: .init(userInterfaceStyle: .dark))
     }
 
-    /// `color.oy_light`
-    @available(iOS 13.0, *) public var oy_light: UIColor {
+    /// `color.oy_lightModeColor`
+    @available(iOS 13.0, *) public var oy_lightModeColor: UIColor {
         resolvedColor(with: .init(userInterfaceStyle: .light))
     }
 
@@ -105,9 +119,9 @@ extension UIColor {
         var red: CGFloat = 0, green: CGFloat = 0, blue: CGFloat = 0, alpha: CGFloat = 0
         if self.getRed(&red, green: &green, blue: &blue, alpha: &alpha) {
             return UIColor(red: min(red + percentage / 100, 1.0),
-                green: min(green + percentage / 100, 1.0),
-                blue: min(blue + percentage / 100, 1.0),
-                alpha: alpha)
+                           green: min(green + percentage / 100, 1.0),
+                           blue: min(blue + percentage / 100, 1.0),
+                           alpha: alpha)
         } else {
             return nil
         }

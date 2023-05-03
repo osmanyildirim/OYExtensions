@@ -34,6 +34,16 @@ extension Date {
     public func oy_string(format: OYDateFormat = .default) -> String {
         format.dateFormatter.string(from: self)
     }
+    
+    /// `date1.oy_formatted(as: .isoDate)` → output → "2023-02-03"
+    /// `date1.oy_formatted(as: .combined)` → output → "0302202312452200"
+    /// `date1.oy_formatted(as: .time)` → output → "12:45:22"
+    public func oy_formatted(as format: OYDateFormat, locale: Locale = .current) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = locale
+        dateFormatter.dateFormat = format.format
+        return dateFormatter.string(from: self)
+    }
 
     /// `Date.oy_current.oy_string(format: .default)` → output → 958589138
     public var oy_timeStamp: Int {
@@ -169,6 +179,21 @@ extension Date {
         Calendar.current.isDate(self, equalTo: Date(), toGranularity: .year)
     }
 
+    /// `Date.oy_current.oy_isInFuture` → output → false
+    public var oy_isInFuture: Bool {
+        self > Date()
+    }
+
+    /// `Date.oy_current.oy_isInPast` → output → true
+    public var oy_isInPast: Bool {
+        self < Date()
+    }
+    
+    /// `date1.oy_isBetween(start: date2, end: date3)` → output → true
+    public func oy_isBetween(start: Date, end: Date) -> Bool {
+        (min(start, end) ... max(start, end)).contains(self)
+    }
+
     /// `date.oy_add(to: .year, value: 1)` → output → 2023-10-19 04:03:06 +0000
     /// `date.oy_add(to: .month, value: 1)` → output → 2022-11-19 04:03:06 +0000
     /// `date.oy_add(to: .week, value: 1)` → output → 2022-10-26 04:03:06 +0000
@@ -242,6 +267,150 @@ extension Date {
     /// `date.oy_difference(of: .second, from: date1)` → output → 33
     public func oy_difference(of: Calendar.Component, from date: Date) throws -> Int {
         try Self.oy_difference(of: of, date1: date, date2: self)
+    }
+    
+    /// date1 is "03.02.2023 12:45"
+    /// `date1.start(of: .year)` → output → "01.01.2023 00:00:00"
+    /// `date1.start(of: .month)` → output → "01.02.2023 00:00:00"
+    /// `date1.start(of: .hour)` → output → "03.02.2023 12:00:00"
+    /// `date1.start(of: .minute)` → output → "03.02.2023 12:45:00"
+    public func oy_start(of component: Calendar.Component) -> Date {
+        if component == .day {
+            return Calendar.current.startOfDay(for: self)
+        }
+        var components: Set<Calendar.Component> {
+            switch component {
+            case .second: return [.year, .month, .day, .hour, .minute, .second]
+            case .minute: return [.year, .month, .day, .hour, .minute]
+            case .hour: return [.year, .month, .day, .hour]
+            case .day: return [.year, .month, .day]
+            case .weekOfYear, .weekOfMonth: return [.yearForWeekOfYear, .weekOfYear]
+            case .month: return [.year, .month]
+            case .year: return [.year]
+            default: return []
+            }
+        }
+        guard components.isEmpty == false else { return self }
+        return Calendar.current.date(from: Calendar.current.dateComponents(components, from: self)) ?? self
+    }
+    
+    /// date1 is "03.02.2023 12:45"
+    /// `date1.start(of: .year)` → output → "31.12.2023 23:59:59"
+    /// `date1.start(of: .month)` → output → "29.02.2023 23:59:59"
+    /// `date1.start(of: .hour)` → output → "03.02.2023 12:59:59"
+    /// `date1.start(of: .minute)` → output → "03.02.2023 12:45:59"
+    public func end(of component: Calendar.Component) -> Date {
+        let date = oy_start(of: component)
+        var components: DateComponents? {
+            switch component {
+            case .second:
+                var components = DateComponents()
+                components.second = 1
+                components.nanosecond = -1
+                return components
+            case .minute:
+                var components = DateComponents()
+                components.minute = 1
+                components.second = -1
+                return components
+            case .hour:
+                var components = DateComponents()
+                components.hour = 1
+                components.second = -1
+                return components
+            case .day:
+                var components = DateComponents()
+                components.day = 1
+                components.second = -1
+                return components
+            case .weekOfYear, .weekOfMonth:
+                var components = DateComponents()
+                components.weekOfYear = 1
+                components.second = -1
+                return components
+            case .month:
+                var components = DateComponents()
+                components.month = 1
+                components.second = -1
+                return components
+            case .year:
+                var components = DateComponents()
+                components.year = 1
+                components.second = -1
+                return components
+            default:
+                return nil
+            }
+        }
+        guard let addedComponent = components else { return self }
+        return Calendar.current.date(byAdding: addedComponent, to: date) ?? self
+    }
+}
+
+// MARK: - Calendar.Component
+extension Date {
+    /// Unit Styles
+    /// `.abbreviated` → 3 min. ago
+    /// `.full` → 3 minutes ago
+    /// `.short` → 3 min. ago
+    /// ‌`.spellOut` → three minutes ago
+    
+    /// `Date.oy_localizedString(type: .hour, numberOfUnits: 2, locale: .init(identifier: "en"), unitsStyle: .abbreviated)` →  "2h"
+    /// `Date.oy_localizedString(type: .day, numberOfUnits: 12, locale: .init(identifier: "en"), unitsStyle: .full)` →  "12 days"
+    /// `Date.oy_localizedString(type: .month, numberOfUnits: 3, locale: .init(identifier: "en"), unitsStyle: .short)` →  "3 mths"
+    /// `Date.oy_localizedString(type: .year, numberOfUnits: -5, locale: .init(identifier: "en"), unitsStyle: .spellOut)` →  "minus five years"
+    public static func oy_localizedString(type: Calendar.Component, numberOfUnits: Int, locale: Locale = Locale.current, unitsStyle: DateComponentsFormatter.UnitsStyle = .full) -> String? {
+        let formatter = DateComponentsFormatter()
+        formatter.calendar?.locale = locale
+        formatter.maximumUnitCount = 1
+        formatter.unitsStyle = unitsStyle
+        formatter.zeroFormattingBehavior = .dropAll
+        
+        var dateComponents = DateComponents()
+        dateComponents.setValue(numberOfUnits, for: type)
+        return formatter.string(from: dateComponents)
+    }
+}
+
+// MARK: - RelativeDateTimeFormatter
+@available(iOS 13.0, *) extension Date {
+    /// Unit Styles
+    /// `.abbreviated` → 3 min. ago
+    /// `.full` → 3 minutes ago
+    /// `.short` → 3 min. ago
+    /// ‌`.spellOut` → three minutes ago
+    
+    /// `Date.oy_localizedString(interval: 60 * 1440 * 30, locale: .init(identifier: "en"), unitsStyle: .full)` →  "in 1 month"
+    /// `Date.oy_localizedString(interval: 60 * 1440, locale: .init(identifier: "en"), unitsStyle: .spellOut)` → "in one day"
+    /// `Date.oy_localizedString(interval: 60 * 1440 * 21, locale: .init(identifier: "en"), unitsStyle: .short)` → "in 3 wk."
+    /// `Date.oy_localizedString(interval: -60, locale: .init(identifier: "en"), unitsStyle: .abbreviated)` → "1 min. ago"
+    public static func oy_localizedString(interval: TimeInterval, locale: Locale = Locale.current, unitsStyle: RelativeDateTimeFormatter.UnitsStyle = .full) -> String {
+        let relativeDateTimeFormatter = RelativeDateTimeFormatter()
+        relativeDateTimeFormatter.locale = locale
+        relativeDateTimeFormatter.unitsStyle = unitsStyle
+        return relativeDateTimeFormatter.localizedString(fromTimeInterval: interval)
+    }
+    
+    /// `Date.oy_localizedString(dateComponents: DateComponents(month: 1), locale: .init(identifier: "en"), unitsStyle: .full)` → "in 1 month"
+    /// `Date.oy_localizedString(dateComponents: DateComponents(year: -2), locale: .init(identifier: "en"), unitsStyle: .spellOut)` → "two years ago"
+    /// `Date.oy_localizedString(dateComponents: DateComponents(hour: 12), locale: .init(identifier: "en"), unitsStyle: .short)` → "in 12 hr."
+    /// `Date.oy_localizedString(dateComponents: DateComponents(day: -17), locale: .init(identifier: "en"), unitsStyle: .abbreviated)` → "17 days ago"
+    public static func oy_localizedString(dateComponents: DateComponents, locale: Locale = Locale.current, unitsStyle: RelativeDateTimeFormatter.UnitsStyle = .full) -> String {
+        let relativeDateTimeFormatter = RelativeDateTimeFormatter()
+        relativeDateTimeFormatter.locale = locale
+        relativeDateTimeFormatter.unitsStyle = unitsStyle
+        return relativeDateTimeFormatter.localizedString(from: dateComponents)
+    }
+    
+    /// `date1.oy_localizedString(relativeTo: date2, locale: .init(identifier: "en"), unitsStyle: .full)` → "in 1 month"
+    /// `date1.oy_localizedString(relativeTo: date2, locale: .init(identifier: "en"), unitsStyle: .spellOut)` → "in one day"
+    /// `date1.oy_localizedString(relativeTo: date2, locale: .init(identifier: "en"), unitsStyle: .short)` → "in 12 hr."
+    /// `date1.oy_localizedString(relativeTo: date2, locale: .init(identifier: "en"), unitsStyle: .abbreviated)` → "1 min. ago"
+    public func oy_localizedString(relativeTo: Date, locale: Locale = Locale.current, unitsStyle: RelativeDateTimeFormatter.UnitsStyle = .full) -> String {
+        let relativeDateTimeFormatter = RelativeDateTimeFormatter()
+        relativeDateTimeFormatter.locale = locale
+        relativeDateTimeFormatter.unitsStyle = unitsStyle
+        return relativeDateTimeFormatter.localizedString(for: self, relativeTo: relativeTo)
     }
 }
 

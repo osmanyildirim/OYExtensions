@@ -34,7 +34,7 @@ extension UITableView: OYInit {
     /// - Parameters:
     ///   - nibs: nib classes
     ///   - bundle: bundle
-    public func oy_register<C: UITableViewCell & OYReusable>(nibs: C.Type..., bundle: Bundle = .main) {
+    public func oy_register<C: UITableViewCell>(nibs: C.Type..., bundle: Bundle = .main) {
         _ = nibs.map { oy_register(nib: $0, bundle: bundle) }
     }
 
@@ -80,6 +80,14 @@ extension UITableView: OYInit {
     public var oy_indexPathForLastRow: IndexPath? {
         guard let lastSection = oy_lastSection else { return nil }
         return oy_indexPathForLastRow(inSection: lastSection)
+    }
+    
+    /// Checks the validity of IndexPath of UITableView
+    public func oy_isValidIndexPath(_ indexPath: IndexPath) -> Bool {
+        return indexPath.section >= 0 &&
+               indexPath.row >= 0 &&
+               indexPath.section < numberOfSections &&
+               indexPath.row < numberOfRows(inSection: indexPath.section)
     }
 
     /// Index of last section in UITableView

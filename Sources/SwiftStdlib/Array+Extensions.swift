@@ -13,12 +13,19 @@ extension Array {
         [Element](repeating: item, count: `repeat`)
     }
     
-    /// let array = [1, 2, 3]
     /// `[1, 2, 3, 4, 1].oy_item(at: 2)` → output → 3
     /// `[1, 2, 3, 4, 1].oy_item(at: 9)` → output → nil
     public func oy_item(at index: Int) -> Element? {
         if Int(index) >= count {
             return nil
+        }
+        return self[index]
+    }
+    
+    /// `[1, 2, 3].oy_item(at: 4, default: 0)` → output → 0
+    public func oy_item(at index: Int, `default`: Element) -> Element {
+        if Int(index) >= count {
+            return `default`
         }
         return self[index]
     }
@@ -83,14 +90,10 @@ extension Array {
         }
     }
 
-    /// `[1, 2, 3, 4, 5].oy_remove(at: 0)` → output → [2,  3,  4,  5]
-    public mutating func oy_remove(at index: Int) {
-        remove(at: index)
-    }
-
-    /// `[1, 2, 3, 4, 5].array.oy_remove(at: 1, 4)` → output → [1,  3,  4]
+    /// `[1, 2, 3, 4, 5].oy_remove(at: 1, 4)` → output → [1,  3,  4]
     public mutating func oy_remove(at indexes: Int...) {
-        indexes.reversed().forEach { self.remove(at: $0) }
+        let indexes = indexes.filter({ $0 < count }).oy_sortDescending()
+        indexes.forEach { remove(at: $0) }
     }
 
     /// `[1, 2, 2, 3, 4, 5].oy_remove(item: 3)` → output → [1,  2,  4,  5]
@@ -169,13 +172,30 @@ extension Array {
     /// struct Person {
     ///    var name: String
     /// }
-    /// `peoples.oy_sorted(keyPath: \.familyName,  by: >)`
-    public func oy_sorted<Value: Comparable>(keyPath: KeyPath<Element, Value>, by: (Value, Value) -> Bool) -> [Element] {
+    /// `peoples.oy_sort(keyPath: \.familyName,  by: >)`
+    public func oy_sort<Value: Comparable>(keyPath: KeyPath<Element, Value>, by: (Value, Value) -> Bool) -> [Element] {
         sorted { lhs, rhs -> Bool in
             by(lhs[keyPath: keyPath], rhs[keyPath: keyPath])
         }
     }
+    
+    /// `[3, 1, 2].oy_split(by: 3)`→ output → [1, ,2 , 3]
+    public func oy_sortAscending() -> Self where Element: Comparable {
+        sorted { lhs, rhs in lhs < rhs }
+    }
 
+    /// `[3, 1, 2].oy_split(by: 3)`→ output → [3, ,2 , 1]
+    public func oy_sortDescending() -> Self where Element: Comparable {
+        sorted { lhs, rhs in lhs > rhs }
+    }
+    
+    /// `[1, 2, 3, 4, 5, 6, 7].oy_split(by: 3)`→ output → [[1, 2, 3], [4, 5, 6], [7]]
+    public func oy_split(by itemCount: Int) -> [[Element]] {
+        stride(from: 0, to: count, by: itemCount).map {
+            Array(self[$0..<Swift.min($0 + itemCount, count)])
+        }
+    }
+    
     /// `[1, 2, 2, 3, 4, 5, 5].oy_nonDuplicates()` → output → [1, 2, 3, 4, 5]
     public func oy_nonDuplicates() -> [Element] where Iterator.Element: Hashable {
         var seen: Set<Iterator.Element> = []
@@ -191,22 +211,20 @@ extension Array {
 
     /// `[1, 2, 2, 3, 4, 5, 5].oy_nonDuplicated()` → output → [1, 2, 3, 4, 5]
     public mutating func oy_nonDuplicated() where Iterator.Element: Hashable {
-        var unique: Set<Iterator.Element> = []
-        self = filter { unique.insert($0).inserted }
+        self = oy_nonDuplicates()
     }
     
     /// let students = [1, 2, 2, 3, 3, 3].map({ Student(id: $0) })
     /// `students.oy_nonDuplicated(keyPath: \.id)` → output → [Student(id: 1), Student(id: 2), Student(id: 3)]
     public mutating func oy_nonDuplicated<T: Hashable>(keyPath: KeyPath<Element, T>) {
-        var unique = Set<T>()
-        self = filter { unique.insert($0[keyPath: keyPath]).inserted }
+        self = oy_nonDuplicates(keyPath: keyPath)
     }
 
     /// var array = [1, 2, 2, 3, 4, 5, 5]
     /// `array.oy_clearAllDuplicatedItems()` → output → [1, 3, 4]
     public mutating func oy_clearAllDuplicatedItems() where Element: Equatable {
         self = reduce(into: [Element]()) { result, item in
-            if self.filter({ $0 == item }).count <= 1 {
+            if filter({ $0 == item }).count <= 1 {
                 result.append(item)
             }
         }
@@ -216,7 +234,7 @@ extension Array {
     /// `students.oy_clearAllDuplicatedItems(keyPath: \.id)` → output → [Student(id: 1)]
     public mutating func oy_clearAllDuplicatedItems<T: Hashable>(keyPath: KeyPath<Element, T>) where Element: Equatable {
         self = reduce(into: [Element]()) { result, item in
-            if self.filter({ $0 == item }).count <= 1 {
+            if filter({ $0 == item }).count <= 1 {
                 result.append(item)
             }
         }
@@ -237,6 +255,21 @@ extension Array {
     /// `[1, 2, 3].oy_isSameArray(as: [1, 2, 3])` → output → true
     public func oy_isSameArray(as items: [Element]) -> Bool where Element: Comparable {
         count == items.count && sorted() == items.sorted()
+    }
+    
+    /// var array: [Any?] = [1, 2, 3, nil]
+    /// `array.oy_clearNilValues()` → output → [1, 2, 3]]
+    public mutating func oy_clearNilValues() where Element == Any? {
+        let compacted = compactMap({ $0 })
+        self = compacted
+    }
+
+    /// Split array of elements into chunks of a size  specify
+    /// `[1, 2, 3, 4, 5, 6, 7].oy_chunk(size: 3)` → output →  [[1,2,3], [4,5,6], [7]]
+    public func oy_chunk(size: Int) -> [[Element]] {
+        stride(from: 0, to: self.count, by: size).map {
+            Array(self[$0..<Swift.min($0 + size, self.count)])
+        }
     }
 
     /// `[1, 2, 3, 4, 1].oy_count(where: { $0 == 1 })` → output → 2
@@ -291,7 +324,7 @@ extension Array {
     }
 
     /// `["Ash", "Brock", "Misty"].oy_localizedJoined()` → output → "Ash, Brock and Misty"
-    public func oy_localizedJoined(localeIdentifier: String = "en") -> String where Element == String {
+    public func oy_localizedJoined(localeIdentifier: String = Locale.current.identifier) -> String where Element == String {
         if #available(iOS 13.0, *) {
             let formatter = ListFormatter()
             formatter.locale = Locale(identifier: localeIdentifier)
@@ -326,5 +359,17 @@ extension Collection {
     /// }
     public var oy_indexed: [(offset: Int, element: Element)] {
         Array(enumerated())
+    }
+}
+
+extension MutableCollection {
+    /// Mutating all elements of a mutable collection
+    /// ` personArray.oy_mutateEach { element in
+    /// `     element.name = "Jane"
+    /// ` }
+    public mutating func oy_mutateEach(_ body: (inout Element) throws -> Void) rethrows {
+        for index in indices {
+            try body(&self[index])
+        }
     }
 }

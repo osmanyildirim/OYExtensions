@@ -52,7 +52,7 @@ extension UIFont {
         return traits[UIFontDescriptor.TraitKey.weight.rawValue] as? CGFloat
     }
 
-    /// Print fonts name(s) in App's
+    /// Print fonts name(s) for App
     public static func oy_printFonts() {
         for familyName in familyNames {
             print("family: \(familyName)\n")
@@ -61,5 +61,15 @@ extension UIFont {
                 print("font: \(fontName)")
             }
         }
+    }
+
+    /// Register custom fonts
+    /// `UIFont.oy_register(fonts: "Rubik-Black.ttf", "Rubik-Medium.ttf")`
+    public static func oy_register(fonts: String...) {
+        let generateItems = { (name: String) in
+            let font = Bundle.main.url(forResource: name, withExtension: nil)!
+            CTFontManagerRegisterFontsForURL(font as CFURL, CTFontManagerScope.process, nil)
+        }
+        (fonts).forEach(generateItems)
     }
 }

@@ -60,6 +60,30 @@ extension UITextField: OYInit {
         text?.removeAll()
         attributedText = NSAttributedString(string: "")
     }
+    
+    /// Set tint color of clear button
+    public func oy_setClearButton(tintColor: UIColor) {
+        let clearButton = value(forKey: "clearButton") as? UIButton
+        let image = clearButton?.imageView?.image?.withRenderingMode(.alwaysTemplate)
+        clearButton?.setImage(image, for: .normal)
+        clearButton?.tintColor = tintColor
+    }
+
+    /// Set image of clear button
+    func oy_setClearButton(image: UIImage?) {
+        if let image, let clearButton = value(forKeyPath: "_clearButton") as? UIButton {
+            clearButton.setImage(image, for: .normal)
+            clearButton.setImage(image, for: .highlighted)
+        }
+    }
+
+    /// Returns replaced string of UITextField with entered text
+    /// Should be used within the `textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String)` method
+    /// `let text = textField.shouldText(with: range, replacementString: string)`
+    func oy_shouldText(with range: NSRange, replacementString string: String) -> String {
+        guard let text = text else { return "" }
+        return NSString(string: text).replacingCharacters(in: range, with: string)
+    }
 
     /// Add done button to UITextField toolbar
     public func oy_addDoneButton(position: DoneButtonPosition = .right, title: String, style: UIBarStyle = .default, backgroundColor: UIColor? = nil, textColor: UIColor? = nil) {

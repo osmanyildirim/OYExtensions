@@ -73,6 +73,18 @@ extension String {
     public mutating func oy_replaced(ofs: [String], with: String) {
         self = oy_replace(ofs: ofs, with: with)
     }
+    
+    /// var value = "Hello World. I am a iOS Developer."
+    /// `"ğşçö".oy_occurrencesReplace()` → output → "gsco"
+    public func oy_occurrencesReplace() -> Self {
+        folding(options: .diacriticInsensitive, locale: Locale(identifier: "en")) // "gsco"
+    }
+
+    /// var value = "ğşçö"
+    /// `value.oy_occurrencesReplaced()` → output → "gsco"
+    public mutating func oy_occurrencesReplaced() {
+        self = folding(options: .diacriticInsensitive, locale: Locale(identifier: "en")) // "gsco"
+    }
 
     /// `"Hello World".oy_remove(string: "World")` → output →  "Hello "
     public func oy_remove(string: String) -> String {
@@ -154,6 +166,11 @@ extension String {
     public func oy_split(_ value: String) -> [String] {
         components(separatedBy: value)
     }
+    
+    /// `"lorem ipsum dolor sit amet".oy_words` → output → ["lorem", "ipsum", "dolor", "sit", "amet"]
+    public var oy_words: [Self] {
+        components(separatedBy: .punctuationCharacters).joined().components(separatedBy: .whitespaces)
+    }
 
     /// `"Abc123Xyz".oy_between(left: "Abc", right: "Xyz")` → output → "123"
     public func oy_between(left: String, right: String) -> String? {
@@ -191,6 +208,11 @@ extension String {
     /// `"123 456 789".oy_clearSpaces` → output → "123456789"
     public var oy_clearSpaces: String {
         oy_replace(of: " ", with: "")
+    }
+    
+    /// `"Swift".oy_repat(count: 3)` → output → "SwiftSwiftSwift"
+    public func oy_repat(count: Int) -> String {
+        return String(repeating: self, count: count)
     }
 
     /// `"12345".oy_isNumber` → output → true
@@ -345,9 +367,10 @@ extension String {
         lowercased()
     }
 
-    /// `"hello wORLD".oy_uppercase` → output → "HELLO WORLD"
-    public var oy_uppercase: String {
-        uppercased()
+    /// `"hello wORLD".oy_uppercase()` → output → "HELLO WORLD"
+    /// `"i love Apple".oy_uppercase(localeIdentifier: "tr_TR")` → output → "İ LOVE APPLE"
+    public func oy_uppercase(localeIdentifier: String = Locale.current.identifier) -> String {
+        uppercased(with: Locale(identifier: localeIdentifier))
     }
 
     /// `"HelloWorld".oy_snakeCase` → output → "hello_world"
@@ -522,6 +545,23 @@ extension String {
     /// /// `"💻A".oy_isAllSatisfyEmoji`→ output → false
     public var oy_isAllSatisfyEmoji: Bool {
         allSatisfy({ $0.oy_isEmoji })
+    }
+    
+    /// Convert string to html
+    /// `#"<h1 style="color: #ad2131;">Hello World</h1>"#.oy_convertToHtml(font: UIFont(name: "HelveticaNeue", size: 18))`
+    public func oy_convertToHtml(font: UIFont? = nil) -> NSMutableAttributedString {
+        guard let data = data(using: .utf8) else { return NSMutableAttributedString() }
+        do {
+            let attributedString = try NSMutableAttributedString(data: data, options: [NSAttributedString.DocumentReadingOptionKey.documentType:
+                                                                                        NSAttributedString.DocumentType.html,
+                                                                                       NSAttributedString.DocumentReadingOptionKey.characterEncoding: String.Encoding.utf8.rawValue],
+                                                                 documentAttributes: nil)
+            guard let font else { return attributedString }
+            attributedString.oy_applyFont(font)
+            return attributedString
+        } catch {
+            return NSMutableAttributedString()
+        }
     }
 
     /// Encrypts plain String with the given key using AES.GCM and returns a base64 encoded encrypted data

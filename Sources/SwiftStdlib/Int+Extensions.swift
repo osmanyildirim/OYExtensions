@@ -133,13 +133,13 @@ extension Int {
         }
     }
     
-    /// `5.oy_times {
-    ///     // do stuff
+    /// `5.oy_times { time in
+    /// `    print(time) // 1, 2, 3, 4, 5
     /// `}
-    public func oy_times(_ completion: () throws -> Void) rethrows {
+    public func oy_times(_ completion: (Int) throws -> Void) rethrows {
         guard self > 0 else { return }
-        for _ in 0 ..< self { try completion() }
-      }
+        for i in 1 ... self { try completion(i) }
+    }
 }
 
 extension Int {

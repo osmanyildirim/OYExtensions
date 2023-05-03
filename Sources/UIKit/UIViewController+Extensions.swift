@@ -58,6 +58,14 @@ extension UIViewController {
     public func oy_dismiss(completion: (() -> Void)? = nil) {
         dismiss(animated: true, completion: completion)
     }
+    
+    /// The root view controller for the window
+    public static var oy_root: UIViewController? {
+        guard let keyWindow = UIApplication.oy_keyWindow, let root = keyWindow.rootViewController else {
+            return nil
+        }
+        return root
+    }
 
     /// Navigation controller of UIViewController
     public var oy_navigationController: UINavigationController? {

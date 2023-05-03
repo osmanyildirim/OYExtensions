@@ -49,7 +49,7 @@ public enum OYDateFormat {
 }
 
 extension OYDateFormat {
-    private var format: String {
+    var format: String {
         switch self {
         case .`default`: return "dd.MM.yyyy HH:mm:ss"
         case .short: return "dd-MM-yyyy"

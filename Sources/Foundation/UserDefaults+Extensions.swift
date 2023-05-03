@@ -49,11 +49,20 @@ extension UserDefaults {
     /// Delete objects by keys from UserDefaults.
     /// - Parameter keys: keys of objects to be remove
     public func oy_remove(keys: [String]) {
-        keys.forEach({ removeObject(forKey: $0) })
+        let removeClosure = { (key: String) in
+            self.removeObject(forKey: key)
+        }
+        keys.forEach(removeClosure)
     }
 
     /// Delete object from store.
-    public func oy_removeAll() {
-        oy_remove(keys: dictionaryRepresentation().oy_allKeys)
+    /// - Parameter suite: optional SuiteName
+    /// If suiteName is null, one by one key-value is deleted
+    public func oy_removeAll(suite: String?) {
+        guard let suite else {
+            oy_remove(keys: dictionaryRepresentation().oy_allKeys)
+            return
+        }
+        UserDefaults.standard.removePersistentDomain(forName: suite)
     }
 }
