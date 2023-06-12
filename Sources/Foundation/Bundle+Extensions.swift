@@ -16,6 +16,9 @@ extension Bundle {
     /// `Bundle.main.oy_appName`→ output → "OYExtensions"
     public var oy_appName: String? { oy_infoPlistValue(key: "CFBundleName") as? String }
     
+    /// `Bundle.main.oy_targetName`→ output → "OYExtensionsStage"
+    public var oy_targetName: String? { oy_infoPlistValue(key: "TargetName") as? String }
+    
     /// `Bundle.main.oy_displayName`→ output → "OYExtensions"
     public var oy_displayName: String? { oy_infoPlistValue(key: "CFBundleDisplayName") as? String }
 

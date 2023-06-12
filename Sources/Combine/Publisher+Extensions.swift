@@ -5,7 +5,9 @@
 //  Created by osmanyildirim
 //
 
-import Combine
+#if canImport(Combine)
+    import Combine
+#endif
 
 @available(iOS 13.0, *)
 extension Publisher where Failure == Never {

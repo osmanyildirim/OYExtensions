@@ -58,4 +58,7 @@ public enum OYError: Error {
     
     /// Converting String to Data failed
     case dataToStringFailed
+    
+    /// User denies authorization to access tracking
+    case advertisingTrackingIsNotEnabled
 }

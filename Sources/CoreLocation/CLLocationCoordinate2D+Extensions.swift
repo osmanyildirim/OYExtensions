@@ -5,7 +5,9 @@
 //  Created by osmanyildirim
 //
 
-import CoreLocation
+#if canImport(CoreLocation)
+    import CoreLocation
+#endif
 
 extension CLLocationCoordinate2D: Equatable {
     /// Compare coordinates

@@ -37,7 +37,7 @@ extension UITextField: OYInit {
 
     /// Get and Set monospaced for UITextField
     public var oy_monospaced: CGFloat? {
-        get { defaultTextAttributes.oy_get(.kern) as? CGFloat }
+        get { defaultTextAttributes.oy_valueWith(key: .kern) as? CGFloat }
         set(value) { defaultTextAttributes.oy_set(key: .kern, value: value ?? 0) }
     }
 

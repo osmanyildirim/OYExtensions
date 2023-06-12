@@ -16,7 +16,7 @@ extension UIAlertController {
     public static func oy_showAlert(title: String?,
                                     message: String?,
                                     actions: [OYAction],
-                                    textField: [OYAlertTextField]? = nil,
+                                    textField: [OYAlertControllerTextField]? = nil,
                                     viewController: UIViewController? = UIApplication.oy_topViewController,
                                     closure: OYAlertSelectedClosure?) {
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)

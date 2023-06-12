@@ -6,8 +6,9 @@
 //
 
 import Foundation
-
-import CryptoKit
+#if canImport(CryptoKit)
+    import CryptoKit
+#endif
 
 extension Data {
     /// `data.oy_decode()`
