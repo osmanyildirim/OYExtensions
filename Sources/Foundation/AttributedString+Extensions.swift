@@ -13,8 +13,8 @@ extension NSAttributedString {
         NSAttributedString(string: text, attributes: attributes)
     }
 
-    /// `attrString.oy_attribute([.backgroundColor: UIColor.yellow, .underlineStyle: true])`
-    public func oy_attribute(_ attributes: [Key: Any]) -> NSAttributedString {
+    /// `attrString.oy_addAttribute([.backgroundColor: UIColor.yellow, .underlineStyle: true])`
+    public func oy_addAttribute(_ attributes: [Key: Any]) -> NSAttributedString {
         guard !string.isEmpty else { return self }
 
         let copy = NSMutableAttributedString(attributedString: self)
@@ -24,22 +24,22 @@ extension NSAttributedString {
 
     /// `attrString.oy_color(.black)`
     public func oy_color(_ color: UIColor) -> NSAttributedString {
-        oy_attribute([.foregroundColor: color])
+        oy_addAttribute([.foregroundColor: color])
     }
 
     /// `attrString.oy_backgroundColor(.blue)`
     public func oy_backgroundColor(_ color: UIColor) -> NSAttributedString {
-        oy_attribute([.backgroundColor: color])
+        oy_addAttribute([.backgroundColor: color])
     }
 
     /// `attrString.oy_font(.systemFont(ofSize: 12))`
     public func oy_font(_ font: UIFont) -> NSAttributedString {
-        oy_attribute([.font: font])
+        oy_addAttribute([.font: font])
     }
 
     /// `attrString.oy_underline(true)`
     public func oy_underline(_ value: Bool) -> NSAttributedString {
-        oy_attribute([.underlineStyle: value])
+        oy_addAttribute([.underlineStyle: value])
     }
 }
 

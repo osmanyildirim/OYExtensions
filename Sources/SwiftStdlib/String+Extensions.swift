@@ -6,7 +6,9 @@
 //
 
 import UIKit
-import CryptoKit
+#if canImport(CryptoKit)
+    import CryptoKit
+#endif
 
 extension String {
     /// `"Hello World"[6]` → output → (String) "W"

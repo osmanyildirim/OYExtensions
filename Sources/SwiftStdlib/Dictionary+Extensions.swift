@@ -34,25 +34,63 @@ extension Dictionary {
     }
 
     /// var dict = ["Key1": "Value1", "Key2": "Value2]
-    /// `dict.oy_get("Key1")` → output  → "Value1"
-    public func oy_get(_ key: Key) -> Value? {
+    /// `dict.oy_valueWith(key: "Key1")` → output  → "Value1"
+    public func oy_valueWith(key: Key) -> Value? {
         self[key]
     }
-
+    
+    /// var dict = ["Key1": "Value1", "Key2": "Value2]
+    /// `dict.oy_valuesWith(key: ["Key1", "Key2"])` → output  → ["Value1", "Value2"]
+    public func oy_valuesWith(keys: [Key]) -> [Value] {
+        filter({ keys.contains($0.key) }).map(\.value)
+    }
+    
     /// var dict = ["Key1": "Value1", "Key2": "Value2", "Key3": "Value3"]
-    /// `dict.oy_get(key: "Key1")` → output  → ["Key1": "Value1"]
-    public func oy_get(key: Key) -> [Key: Value] {
+    /// `dict.oy_keyWith(value: "Value1")` → output  → "Key1"
+    public func oy_keyWith(value: Value) -> Key? where Value: Equatable {
+        first(where: { $0.value == value })?.key
+    }
+    
+    /// var dict = ["Key1": "Value1", "Key2": "Value2", "Key3": "Value3"]
+    /// `dict.oy_keysWith(values: ["Value1", "Value2"])` → output  → ["Key1", Key2"]
+    public func oy_keysWith(values: [Value]) -> [Key] where Value: Equatable {
+        filter({ values.contains($0.value) }).map(\.key)
+    }
+    
+    /// var dict = ["Key1": "Value1", "Key2": "Value2", "Key3": "Value3"]
+    /// `dict.oy_itemWith(key: "Key1")` → output  → ["Key1": "Value1"]
+    public func oy_itemWith(key: Key) -> [Key: Value] {
         var result = Self()
         result[key] = self[key]
         return result
     }
 
     /// var dict = ["Key1": "Value1", "Key2": "Value2", "Key3": "Value3"]
-    /// `dict.oy_get(keys: ["Key1", "Key2"])` → output  → ["Key1": "Value1", "Key2": "Value2"]
-    public func oy_get(keys: [Key]) -> [Key: Value] {
+    /// `dict.oy_itemsWith(keys: ["Key1", "Key2"])` → output  → ["Key1": "Value1", "Key2": "Value2"]
+    public func oy_itemsWith(keys: [Key]) -> [Key: Value] {
         keys.reduce(into: [Key: Value]()) { result, item in
             result[item] = self[item]
         }
+    }
+    
+    /// var dict = ["Key1": "Value1", "Key2": "Value2", "Key3": "Value3"]
+    /// `dict.oy_itemWith(value: "Value1")` → output  → ["Key1": "Value1"]
+    public func oy_itemWith(value: Value) -> [Key: Value]? where Value: Equatable {
+        guard let key = first(where: { $0.value == value })?.key else { return nil }
+        return [key: value]
+    }
+    
+    /// var dict = ["Key1": "Value1", "Key2": "Value2", "Key3": "Value3"]
+    /// `dict.oy_itemsWith(values: ["Value1", "Value2"])` → output  →  ["Key1": "Value1", "Key2": "Value2"]
+    public func oy_itemsWith(values: [Value]) -> [Key: Value] where Value: Equatable {
+        var result = [Key: Value]()
+
+        forEach { key, value in
+            if values.contains(value) {
+                result[key] = value
+            }
+        }
+        return result
     }
 
     /// var dict = ["Key1": "Value1", "Key2": "Value2"]

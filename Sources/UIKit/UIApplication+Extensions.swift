@@ -6,13 +6,53 @@
 //
 
 import UIKit
-import SystemConfiguration
-import SafariServices
+#if canImport(AppTrackingTransparency)
+    import AppTrackingTransparency
+#endif
+#if canImport(SystemConfiguration)
+    import SystemConfiguration
+#endif
+#if canImport(SafariServices)
+    import SafariServices
+#endif
 
 extension UIApplication {
     /// `UIApplication.oy_badgeCount` → output → 2
     public static var oy_badgeCount: Int {
         UIApplication.shared.applicationIconBadgeNumber
+    }
+    
+    /// Request user tracking authorization with a completion handler returning the user's authorization status.
+    /// To use requestTrackingAuthorization(completionHandler:), the `NSUserTrackingUsageDescription` key must be in the Information Property List
+    ///
+    ///     UIApplication.oy_requestATT { result in
+    ///        // do stuff
+    ///     }
+    @available(iOS 14, *) public static func oy_requestATT(completion: @escaping (_ result: OYATTResult) -> Void) {
+        guard Bundle.main.oy_infoPlistValue(key: "NSUserTrackingUsageDescription") != nil else {
+            return completion(.userTrackingUsageDescriptionNotDeclared)
+        }
+
+        ATTrackingManager.requestTrackingAuthorization { status in
+            switch status {
+            case .authorized:
+                completion(.authorized)
+            case .denied:
+                completion(.denied)
+            case .notDetermined:
+                completion(.notDetermined)
+            case .restricted:
+                completion(.restricted)
+            @unknown default:
+                completion(.denied)
+            }
+        }
+    }
+    
+    /// Information the application is authorized to user tracking
+    /// `UIApplication.oy_isAuthorizedATT` → output → true
+    @available(iOS 14, *) public static var oy_isAuthorizedATT: Bool {
+        ATTrackingManager.trackingAuthorizationStatus == .authorized
     }
 
     /// `UIApplication.oy_canOpen(url: "http://www.apple.com")` → output → true

@@ -6,6 +6,15 @@
 //
 
 import UIKit
+#if canImport(AdSupport)
+    import AdSupport
+#endif
+#if canImport(AppTrackingTransparency)
+    import AppTrackingTransparency
+#endif
+#if canImport(AVFoundation)
+    import AVFoundation
+#endif
 
 extension UIDevice {
     /// `UIDevice.oy_current` → output → <UIDevice: 0x6000013e0030>
@@ -16,6 +25,27 @@ extension UIDevice {
     /// `UIDevice.oy_vendorId` → output → "98BBB96B-9A54-4285-8DBF-6BBC4AF0674C"
     public static var oy_vendorId: String? {
         oy_current.identifierForVendor?.uuidString
+    }
+    
+    /// `UIDevice.oy_advertisingId` → output → "123e4567-e89b-12d3-a456–426614174000"
+    /// Your app must request tracking authorization before it can get the advertising identifier
+    public static func oy_advertisingId() throws -> String? {
+        let identifierManager = ASIdentifierManager.shared()
+
+        if #available(iOS 14, *) {
+            if ATTrackingManager.trackingAuthorizationStatus == .authorized {
+                return identifierManager.advertisingIdentifier.uuidString
+            }
+        } else if identifierManager.isAdvertisingTrackingEnabled {
+            return identifierManager.advertisingIdentifier.uuidString
+        }
+        throw OYError.advertisingTrackingIsNotEnabled
+    }
+    
+    /// Create and return a brand new unique identifier
+    ///  `UIDevice.oy_uuid` → output → "68FCCB58-23A5-47BC-AA56-E0757F1BDBEA"
+    public static var oy_uuid: String {
+        NSUUID().uuidString
     }
 
     /// `UIDevice.oy_deviceName` → output → "iPhone 14 Pro Max"
@@ -66,8 +96,8 @@ extension UIDevice {
         oy_current.userInterfaceIdiom == UIUserInterfaceIdiom.pad
     }
 
-    /// `UIDevice.oy_hasSafeArea` → output → true
-    public static var oy_hasSafeArea: Bool {
+    /// `UIDevice.oy_hasNotch` → output → true
+    public static var oy_hasNotch: Bool {
         let bottom = UIApplication.oy_keyWindow?.safeAreaInsets.bottom ?? 0
         return bottom > 0
     }
@@ -96,6 +126,21 @@ extension UIDevice {
         #else
             return false
         #endif
+    }
+    
+    /// On/Off device's torch (camera flash)
+    public static func oy_toggleTorch(level: Float = 1.0) {
+        guard let device = AVCaptureDevice.default(for: .video), device.hasTorch else { return }
+
+        try? device.lockForConfiguration()
+
+        if device.isTorchActive {
+            device.torchMode = .off
+        } else {
+            try? device.setTorchModeOn(level: level)
+        }
+
+        device.unlockForConfiguration()
     }
 }
 

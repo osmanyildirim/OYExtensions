@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct OYAlertTextField: Equatable {
+public struct OYAlertControllerTextField: Equatable {
     var text: String
     var placeholder: String
     var keyboardType: UIKeyboardType

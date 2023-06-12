@@ -5,7 +5,9 @@
 //  Created by osmanyildirim
 //
 
-import MapKit
+#if canImport(MapKit)
+    import MapKit
+#endif
 
 extension MKMapView {
     /// Register MKAnnotationView

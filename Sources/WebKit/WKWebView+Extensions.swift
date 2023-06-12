@@ -5,7 +5,9 @@
 //  Created by osmanyildirim
 //
 
-import WebKit
+#if canImport(WebKit)
+    import WebKit
+#endif
 
 extension WKWebView {
     /// Clear all website data like cookies, local storage, caches, etc.
