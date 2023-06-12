@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name                      = "OYExtensions"
-  s.version                   = "1.0.1"
+  s.version                   = "1.0.2"
   s.summary                   = "Some useful extension for Swift"
 
   s.homepage                  = "https://github.com/osmanyildirim/OYExtensions.git"

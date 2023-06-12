@@ -1,5 +1,5 @@
 //
-//  OYAlertTextField.swift
+//  OYAlertControllerTextField.swift
 //  OYExtensions
 //
 //  Created by osmanyildirim
