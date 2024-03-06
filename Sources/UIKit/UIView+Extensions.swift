@@ -50,10 +50,8 @@ extension UIView {
     }
 
     /// Hide UIView with animation
-    public func oy_hide(animated: Bool = false) {
-        UIView.animate(withDuration: animated ? 0.5 : 0.0) {
-            self.alpha = 0
-        }
+    public func oy_hide() {
+        isHidden = true
     }
     
     /// Determines whether user events are ignored and removed from the event queue
@@ -92,6 +90,11 @@ extension UIView {
     public func oy_addSubviews(_ subviews: UIView...) {
         _ = subviews.map({ addSubview($0) })
     }
+    
+    /// Insert of subview with index
+    public func oy_insertSubview(_ subview: UIView, index: Int) {
+        insertSubview(subview, at: index)
+    }
 
     /// Remove subviews of UIView
     public func oy_removeSubviews() {
@@ -112,34 +115,39 @@ extension UIView {
     }
 
     /// Snapshot of UIView
-    @objc var oy_snapshot: UIImage? {
-        UIGraphicsBeginImageContextWithOptions(layer.frame.size, false, 0)
-        defer {
-            UIGraphicsEndImageContext()
+    @objc public var oy_snapshot: UIImage? {
+        let renderer = UIGraphicsImageRenderer(bounds: bounds)
+        return renderer.image { rendererContext in
+            layer.render(in: rendererContext.cgContext)
         }
-        guard let context = UIGraphicsGetCurrentContext() else { return nil }
-        layer.render(in: context)
-        return UIGraphicsGetImageFromCurrentImageContext()
+    }
+    
+    /// Get and Set background color of UIView
+    public var oy_backgroundColor: UIColor? {
+        get { backgroundColor }
+        set(value) { backgroundColor = value }
     }
 
     /// Circle UIView
     public func oy_circle() {
         layer.cornerRadius = frame.height / 2
+        layer.masksToBounds = true
     }
 
     /// Set corner radius of view
-    public func oy_cornerRadius(corners: UIRectCorner = .allCorners, radius: CGFloat) {
-        layoutIfNeeded()
-        let path = UIBezierPath(roundedRect: bounds, byRoundingCorners: corners, cornerRadii: CGSize(width: radius, height: radius))
-        let mask = CAShapeLayer()
-        mask.path = path.cgPath
-        layer.mask = mask
+    public func oy_cornerRadius(corners: CACornerMask = [.layerMinXMinYCorner, .layerMinXMaxYCorner, .layerMaxXMinYCorner, .layerMaxXMaxYCorner], radius: CGFloat) {
+        layer.cornerRadius = radius
+        layer.masksToBounds = true
+        layer.maskedCorners = corners
     }
 
     /// Add border to UIView
-    public func oy_addBorder(color: UIColor, width: CGFloat) {
+    public func oy_addBorder(color: UIColor, width: CGFloat, radius: CGFloat? = nil) {
         layer.borderWidth = width
         layer.borderColor = color.cgColor
+        layer.masksToBounds = true
+        guard let radius else { return }
+        layer.cornerRadius = radius
     }
 
     /// Remove UIView's border
@@ -148,6 +156,21 @@ extension UIView {
         layer.cornerRadius = 0
         layer.borderColor = nil
         layer.masksToBounds = maskToBounds
+    }
+    
+    /// Update UIView's border with animation
+    public func oy_updateBorderAnimate(color: UIColor?, width: CGFloat?, radius: CGFloat? = nil, duration: CGFloat = 0.5) {
+        UIViewPropertyAnimator(duration: duration, curve: .easeIn) {
+            if let color {
+                self.layer.borderColor = color.cgColor
+            }
+            if let width {
+                self.layer.borderWidth = width
+            }
+            if let radius {
+                self.layer.cornerRadius = radius
+            }
+        }.startAnimation()
     }
 
     /// Add dashed border to UIView
@@ -168,7 +191,7 @@ extension UIView {
     }
 
     /// Get and Set cornerRadius for UIView
-    var oy_cornerRadius: CGFloat {
+    public var oy_cornerRadius: CGFloat {
         get {
             return layer.cornerRadius
         }
@@ -179,7 +202,7 @@ extension UIView {
     }
 
     /// Get and Set borderWidth for UIView
-    var oy_borderWidth: CGFloat {
+    public var oy_borderWidth: CGFloat {
         get {
             return layer.borderWidth
         }
@@ -189,7 +212,7 @@ extension UIView {
     }
 
     /// Get and Set borderColor for UIView
-    var oy_borderColor: UIColor? {
+    public var oy_borderColor: UIColor? {
         get {
             if let borderColor = layer.borderColor {
                 return UIColor(cgColor: borderColor)
@@ -200,6 +223,28 @@ extension UIView {
         set {
             layer.borderColor = newValue?.cgColor
         }
+    }
+    
+    /// Global point on UIWindow of UIView
+    public var oy_globalPoint: CGPoint? {
+        guard let window = UIApplication.oy_keyWindow else {
+            return nil
+        }
+        return window.convert(frame.origin, to: nil)
+    }
+    
+    /// Global frame on UIWindow of UIView
+    public var oy_globalFrame: CGRect? {
+        guard let window = UIApplication.oy_keyWindow else {
+            return nil
+        }
+        return convert(bounds, to: window)
+    }
+    
+    /// Impact between UI elements
+    public func oy_impact(_ style: UIImpactFeedbackGenerator.FeedbackStyle = .light) {
+        let feedbackGenerator = UIImpactFeedbackGenerator(style: style)
+        feedbackGenerator.impactOccurred()
     }
 
     /// Add UITapGestureRecognizer to UIView with completion handler
@@ -309,17 +354,34 @@ extension UIView {
         layer.insertSublayer(gradient, at: 0)
     }
 
+    /// Make clear hole with corner radius on UIView
+    public func oy_makeHole(frame: CGRect, cornerRadius: CGFloat) {
+        let maskLayer = CAShapeLayer()
+        maskLayer.fillRule = .evenOdd
+        maskLayer.fillColor = UIColor.black.cgColor
+
+        let pathToOverlay = UIBezierPath(rect: bounds)
+        pathToOverlay.append(UIBezierPath(roundedRect: frame, cornerRadius: cornerRadius))
+        pathToOverlay.usesEvenOddFillRule = true
+        maskLayer.path = pathToOverlay.cgPath
+
+        layer.mask = maskLayer
+    }
+    
     // MARK: - Animations
     /// Start `FadeIn` animation with duration
-    public func oy_fadeInAnimation(duration: TimeInterval = 0.5) {
-        alpha = 0
+    public func oy_fadeIn(duration: TimeInterval = 0.5, skipSetAlphaZero: Bool = false) {
+        if !skipSetAlphaZero {
+            alpha = 0
+        }
+        
         UIView.animate(withDuration: duration) {
             self.alpha = 1
         }
     }
 
     /// Start `FadeOut` animation with duration
-    public func oy_fadeOutAnimation(duration: TimeInterval = 0.5) {
+    public func oy_fadeOut(duration: TimeInterval = 0.5) {
         UIView.animate(withDuration: duration) {
             self.alpha = 0
         }

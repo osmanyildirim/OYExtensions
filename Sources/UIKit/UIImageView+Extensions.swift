@@ -107,4 +107,14 @@ extension UIImageView: OYInit {
         addSubview(blurEffectView)
         clipsToBounds = true
     }
+    
+    /// Set image with animation
+    /// - Parameters:
+    ///   - image: image
+    ///   - duration: animation duration  (default is 0.3)
+    public func oy_setImageAnimate(image: UIImage, duration: TimeInterval = 0.3) {
+        UIView.transition(with: self, duration: duration, options: .transitionCrossDissolve, animations: {
+            self.image = image
+        }, completion: nil)
+    }
 }

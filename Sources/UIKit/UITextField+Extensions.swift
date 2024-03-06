@@ -80,7 +80,7 @@ extension UITextField: OYInit {
     /// Returns replaced string of UITextField with entered text
     /// Should be used within the `textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String)` method
     /// `let text = textField.shouldText(with: range, replacementString: string)`
-    func oy_shouldText(with range: NSRange, replacementString string: String) -> String {
+    public func oy_shouldText(with range: NSRange, replacementString string: String) -> String {
         guard let text = text else { return "" }
         return NSString(string: text).replacingCharacters(in: range, with: string)
     }

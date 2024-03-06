@@ -28,9 +28,26 @@ extension UIViewController {
     ///     // do stuff
     /// }
     public func oy_present(viewControler: UIViewController, transitionStyle: UIModalTransitionStyle? = nil, completion: (() -> Void)? = nil) {
-        if let transitionStyle = transitionStyle {
+        if let transitionStyle {
             viewControler.modalTransitionStyle = transitionStyle
         }
+        present(viewControler, animated: true, completion: completion)
+    }
+
+    /// `self.oy_present(viewControler: SecondViewController(), presentationStyle: .fullScreen) {
+    ///     // do stuff
+    /// }
+    public func oy_present(viewControler: UIViewController, presentationStyle: UIModalPresentationStyle? = nil, onIpad: Bool = false, completion: (() -> Void)? = nil) {
+        if let presentationStyle {
+            viewControler.modalPresentationStyle = presentationStyle
+        }
+
+        guard #available(iOS 13.0, *), viewControler.modalPresentationStyle == .formSheet, onIpad else {
+            present(viewControler, animated: true, completion: completion)
+            return
+        }
+
+        viewControler.preferredContentSize = .init(width: UIScreen.oy_width, height: UIScreen.oy_height - 44)
         present(viewControler, animated: true, completion: completion)
     }
 

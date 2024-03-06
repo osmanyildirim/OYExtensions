@@ -69,7 +69,16 @@ extension UIImage {
             completion?(.success(image))
         }.resume()
     }
-
+    
+    /// Save image to photo library
+    public func oy_savePhotoLibrary(completion: ((Error?) -> Void)?) {
+        guard Bundle.main.object(forInfoDictionaryKey: "NSPhotoLibraryAddUsageDescription") != nil else {
+            completion?(OYError.permissionError)
+            return
+        }
+        OYSaveImage().saveImage(image: self, completion: completion)
+    }
+    
     /// `image.oy_sizeOnDisk` → output → "1.2578125KB"
     public var oy_sizeOnDisk: String? {
         guard let data = jpegData(compressionQuality: 1.0) else { return nil }
@@ -96,5 +105,19 @@ extension UIImage {
     /// - Returns: optional Data
     public func oy_compressed(quality: CGFloat = 0.5) -> Data? {
         jpegData(compressionQuality: quality)
+    }
+    
+    /// Apply blur filter to UIImage
+    /// - Parameter radius: blur radius e.g `50`
+    /// - Returns: blurred UIImage
+    public func oy_blurred(radius: CGFloat) -> UIImage {
+        guard let cgImage = cgImage, let ciFilter = CIFilter(name: "CIGaussianBlur") else { return self }
+
+        let input = CIImage(cgImage: cgImage)
+        ciFilter.setValue(input, forKey: "inputImage")
+        ciFilter.setValue(radius, forKey: "inputRadius")
+
+        guard let outputImage = ciFilter.outputImage else { return self }
+        return UIImage(ciImage: outputImage)
     }
 }

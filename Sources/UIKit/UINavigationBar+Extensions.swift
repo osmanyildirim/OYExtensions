@@ -28,7 +28,7 @@ extension UINavigationBar {
     }
 
     /// Get and Set background color
-    public var oy_backgroundColor: UIColor? {
+    public var oy_background: UIColor? {
         get {
             backgroundColor
         } set(value) {

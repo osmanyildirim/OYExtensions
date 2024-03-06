@@ -60,6 +60,12 @@ extension Bundle {
         }
         task.resume()
     }
+    
+    /// Checks if the app is installed from the app store
+    /// `Bundle.main.oy_isAppInstalledFromAppStore`→ output → true
+    public var oy_isAppInstalledFromAppStore: Bool {
+        return Bundle.main.appStoreReceiptURL?.lastPathComponent == "sandboxReceipt"
+    }
 
     /// `Bundle.main.oy_appBuildNumber`→ output → "1"
     public var oy_appBuildNumber: String? { oy_infoPlistValue(key: "CFBundleVersion") as? String }
@@ -98,12 +104,19 @@ extension Bundle {
         return !applicationClassName.responds(to: Selector(("shared")))
     }
 
-    /// `Bundle.main.oy_infoPlist(type: [String: Any].self)`
-    public func oy_infoPlist<T>(type: T.Type = [String: Any].self) -> T? {
-        oy_read(file: "Info", fileType: "plist", type: type)
+    /// `Bundle.main.oy_infoPlistAllData` → output → Dictionary<String, Any>
+    public var oy_infoPlistAllData: [String: Any] {
+        oy_read(type: [String: Any].self, name: "Info", fileType: "plist") ?? [:]
     }
 
-    /// `Bundle.main.oy_infoPlistValue(key: "SecretKey")`
+    /// `Bundle.main.oy_read(type: [String: Any].self, name: "Info", fileType: "plist")`→ output → Dictionary<String, Any>
+    public func oy_read<T>(type: T.Type, name: String, fileType: String) -> T? {
+        guard let data = oy_data(name, fileType: fileType) else { return nil }
+        guard let result = try? PropertyListSerialization.propertyList(from: data, options: [], format: nil) as? T else { return nil }
+        return result
+    }
+
+    /// `Bundle.main.oy_infoPlistValue(key: "SecretKey")`→ output → "SecretValue"
     public func oy_infoPlistValue(key: String) -> Any? {
         object(forInfoDictionaryKey: key)
     }
@@ -115,11 +128,9 @@ extension Bundle {
         return decoded
     }
 
-    /// `Bundle.main.oy.read(resource: "Info", fileType: "plist", type: Model.self)`
-    public func oy_read<T>(file: String, fileType: String? = nil, type: T.Type) -> T? {
-        guard let data = oy_data(file, fileType: fileType) else { return nil }
-        guard let result = try? PropertyListSerialization.propertyList(from: data, options: [], format: nil) as? T else { return nil }
-        return result
+    /// `Bundle.main.oy_path(name: "sample", fileType: "html")`
+    public func oy_path(_ name: String, fileType: String? = nil) -> URL? {
+        return url(forResource: name, withExtension: fileType)
     }
 
     /// `Bundle.main.oy_write(resource: "Sample", fileType: "plist", value: newInstance)`
@@ -130,10 +141,6 @@ extension Bundle {
 }
 
 extension Bundle {
-    private func oy_path(_ resource: String, fileType: String? = nil) -> URL? {
-        return url(forResource: resource, withExtension: fileType)
-    }
-
     private func oy_data(_ resource: String, fileType: String?) -> Data? {
         guard let url = oy_path(resource, fileType: fileType) else { return nil }
         guard let data = try? Data(contentsOf: url) else { return nil }

@@ -12,6 +12,9 @@ import UIKit
 #if canImport(AppTrackingTransparency)
     import AppTrackingTransparency
 #endif
+#if canImport(AudioToolbox)
+    import AudioToolbox
+#endif
 #if canImport(AVFoundation)
     import AVFoundation
 #endif
@@ -43,9 +46,14 @@ extension UIDevice {
     }
     
     /// Create and return a brand new unique identifier
-    ///  `UIDevice.oy_uuid` → output → "68FCCB58-23A5-47BC-AA56-E0757F1BDBEA"
+    /// `UIDevice.oy_uuid` → output → "68FCCB58-23A5-47BC-AA56-E0757F1BDBEA"
     public static var oy_uuid: String {
         NSUUID().uuidString
+    }
+    
+    /// `UIDevice.oy_globallyUnique` → output → "7009F12B-64FF-4F69-8C5C-E8A1F3F4BD8A-20863-0000055A7CF567F7"
+    public static var oy_globallyUnique: String {
+        ProcessInfo.processInfo.globallyUniqueString
     }
 
     /// `UIDevice.oy_deviceName` → output → "iPhone 14 Pro Max"
@@ -129,6 +137,7 @@ extension UIDevice {
     }
     
     /// On/Off device's torch (camera flash)
+    /// `UIDevice.oy_toggleTorch()`
     public static func oy_toggleTorch(level: Float = 1.0) {
         guard let device = AVCaptureDevice.default(for: .video), device.hasTorch else { return }
 
@@ -141,6 +150,34 @@ extension UIDevice {
         }
 
         device.unlockForConfiguration()
+    }
+    
+    /// Make a vibration of device
+    /// `UIDevice.oy_vibrateDevice()`
+    public static func oy_vibrateDevice() {
+        AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
+    }
+    
+    /// `UIDevice.oy_userInterfaceStyle` → output → .dark
+    @available(iOS 13.0, *)
+    public static var oy_userInterfaceStyle: UIUserInterfaceStyle {
+        UITraitCollection.current.userInterfaceStyle
+    }
+    
+    /// `UIDevice.oy_isDarkMode` → output → true
+    @available(iOS 13.0, *)
+    public static var oy_isDarkMode: Bool {
+        UITraitCollection.current.userInterfaceStyle == .dark
+    }
+    
+    /// `UIDevice.oy_isPortrait` → output → true
+    public static var oy_isPortrait: Bool {
+        UIDevice.current.orientation.isPortrait
+    }
+    
+    /// `UIDevice.oy_isLandscape` → output → false
+    public static var oy_isLandscape: Bool {
+        UIDevice.current.orientation.isLandscape
     }
 }
 
@@ -161,6 +198,7 @@ extension UIDevice {
             case "iPhone7,1": return "iPhone 6 Plus"
             case "iPhone8,1": return "iPhone 6s"
             case "iPhone8,2": return "iPhone 6s Plus"
+            case "iPhone8,4": return "iPhone SE"
             case "iPhone9,1", "iPhone9,3": return "iPhone 7"
             case "iPhone9,2", "iPhone9,4": return "iPhone 7 Plus"
             case "iPhone10,1", "iPhone10,4": return "iPhone 8"
@@ -176,17 +214,20 @@ extension UIDevice {
             case "iPhone13,2": return "iPhone 12"
             case "iPhone13,3": return "iPhone 12 Pro"
             case "iPhone13,4": return "iPhone 12 Pro Max"
-            case "iPhone14,4": return "iPhone 13 mini"
-            case "iPhone14,5": return "iPhone 13"
+            case "iPhone12,8": return "iPhone SE (2nd generation)"
             case "iPhone14,2": return "iPhone 13 Pro"
             case "iPhone14,3": return "iPhone 13 Pro Max"
+            case "iPhone14,4": return "iPhone 13 mini"
+            case "iPhone14,5": return "iPhone 13"
+            case "iPhone14,6": return "iPhone SE (3rd generation)"
             case "iPhone14,7": return "iPhone 14"
             case "iPhone14,8": return "iPhone 14 Plus"
             case "iPhone15,2": return "iPhone 14 Pro"
             case "iPhone15,3": return "iPhone 14 Pro Max"
-            case "iPhone8,4": return "iPhone SE"
-            case "iPhone12,8": return "iPhone SE (2nd generation)"
-            case "iPhone14,6": return "iPhone SE (3rd generation)"
+            case "iPhone15,4": return "iPhone 15"
+            case "iPhone15,5": return "iPhone 15 Plus"
+            case "iPhone16,1": return "iPhone 15 Pro"
+            case "iPhone16,2": return "iPhone 15 Pro Max"
             case "iPad2,1", "iPad2,2", "iPad2,3", "iPad2,4": return "iPad 2"
             case "iPad3,1", "iPad3,2", "iPad3,3": return "iPad (3rd generation)"
             case "iPad3,4", "iPad3,5", "iPad3,6": return "iPad (4th generation)"
@@ -216,20 +257,55 @@ extension UIDevice {
             case "iPad8,5", "iPad8,6", "iPad8,7", "iPad8,8": return "iPad Pro (12.9-inch) (3rd generation)"
             case "iPad8,11", "iPad8,12": return "iPad Pro (12.9-inch) (4th generation)"
             case "iPad13,8", "iPad13,9", "iPad13,10", "iPad13,11": return "iPad Pro (12.9-inch) (5th generation)"
-            case "AppleTV5,3": return "Apple TV"
-            case "AppleTV6,2": return "Apple TV 4K"
+            case "iPad14,3", "iPad14,4": return "iPad Pro 11-inch (4th generation)"
+            case "iPad14,5", "iPad14,6": return "iPad Pro 12.9-inch (6th generation)"
             case "AudioAccessory1,1": return "HomePod"
             case "AudioAccessory5,1": return "HomePod mini"
             case "i386", "x86_64", "arm64": return "Simulator \(oy_deviceModel(ProcessInfo().environment["SIMULATOR_MODEL_IDENTIFIER"] ?? "iOS"))"
             default: return identifier
             }
+        #elseif os(watchOS)
+            switch identifier {
+            case "Watch1,1": return "Apple Watch (1st generation) - 38mm"
+            case "Watch1,2": return "Apple Watch (1st generation) - 42mm"
+            case "Watch2,6": return "Apple Watch Series 1 - 38mm"
+            case "Watch2,7": return "Apple Watch Series 1 - 42mm"
+            case "Watch2,3": return "Apple Watch Series 2 - 38mm"
+            case "Watch2,4": return "Apple Watch Series 2 - 42mm"
+            case "Watch3,1", "Watch3,3": return "Apple Watch Series 3 - 38mm"
+            case "Watch3,2", "Watch3,4": return "Apple Watch Series 1 - 42mm"
+            case "Watch4,1", "Watch4,3": return "Apple Watch Series 4 - 40mm"
+            case "Watch4,2", "Watch4,4": return "Apple Watch Series 4 - 44mm"
+            case "Watch5,1", "Watch5,3": return "Apple Watch Series 5 - 40mm"
+            case "Watch5,2", "Watch5,4": return "Apple Watch Series 5 - 44mm"
+            case "Watch6,1", "Watch6,3": return "Apple Watch Series 6 - 40mm"
+            case "Watch6,2", "Watch6,4": return "Apple Watch Series 6 - 44mm"
+            case "Watch5,9", "Watch5,11": return "Apple Watch SE - 40mm"
+            case "Watch5,10", "Watch5,12": return "Apple Watch SE - 44mm"
+            case "Watch6,6", "Watch6,8": return "Apple Watch Series 7 - 41mm"
+            case "Watch6,7", "Watch6,9": return "Apple Watch Series 7 - 45mm"
+            case "Watch6,14", "Watch6,16": return "Apple Watch Series 8 - 41mm"
+            case "Watch6,15", "Watch6,17": return "Apple Watch Series 8 - 45mm"
+            case "Watch6,10", "Watch6,12": return "Apple Watch SE (2nd generation) - 40mm"
+            case "Watch6,11", "Watch6,13": return "Apple Watch SE (2nd generation) - 44mm"
+            case "Watch6,18": return "Apple Watch Ultra"
+            case "Watch7,3": return "Apple Watch Series 9 - 41mm"
+            case "Watch7,4": return "Apple Watch Series 9 - 45mm"
+            case "Watch7,5": return "Apple Watch Ultra2"
+            case "i386", "x86_64": return "Simulator \(oy_deviceModel(ProcessInfo().environment["SIMULATOR_MODEL_IDENTIFIER"] ?? "watchOS"))"
+            default: return identifier
+            }
         #elseif os(tvOS)
             switch identifier {
-            case "AppleTV5,3": return "Apple TV 4"
+            case "AppleTV5,3": return "Apple TV"
             case "AppleTV6,2": return "Apple TV 4K"
+            case "AppleTV11,1": return "Apple TV 4K (2nd generation)"
+            case "AppleTV14,1": return "Apple TV 4K (3rd generation"
             case "i386", "x86_64": return "Simulator \(oy_deviceModel(ProcessInfo().environment["SIMULATOR_MODEL_IDENTIFIER"] ?? "tvOS"))"
             default: return identifier
             }
+        #elseif os(visionOS)
+            return identifier
         #endif
     }
 }
