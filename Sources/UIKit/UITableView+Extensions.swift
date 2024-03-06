@@ -152,8 +152,8 @@ extension UITableView: OYInit {
     /// Top and Bottom round corners of UITableView
     /// - Parameter radius: corner radius size
     public func oy_roundCornersTopAndBottom(_ radius: CGFloat) {
-        cellForRow(at: IndexPath(row: 0, section: 0))?.oy_cornerRadius(corners: [.topLeft, .topRight], radius: radius)
-        cellForRow(at: IndexPath(row: numberOfRows(inSection: 0) - 1, section: 0))?.oy_cornerRadius(corners: [.bottomLeft, .bottomRight], radius: radius)
+        cellForRow(at: IndexPath(row: 0, section: 0))?.oy_cornerRadius(corners: [.layerMinXMinYCorner, .layerMaxXMinYCorner], radius: radius)
+        cellForRow(at: IndexPath(row: numberOfRows(inSection: 0) - 1, section: 0))?.oy_cornerRadius(corners: [.layerMinXMaxYCorner, .layerMaxXMaxYCorner], radius: radius)
     }
 
     /// Get and Set refreshControl for UITableView

@@ -22,6 +22,11 @@ extension UISearchBar: OYInit {
         return textField
     }
 
+    /// Get UISearchBar's optional Clear Button
+    public var oy_clearButton: UIButton? {
+        oy_textField?.value(forKey: "clearButton") as? UIButton
+    }
+    
     /// Clear UISearchBar's text
     public func oy_clear() {
         text?.removeAll()

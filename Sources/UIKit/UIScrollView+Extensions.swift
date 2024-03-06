@@ -37,6 +37,37 @@ extension UIScrollView {
         get { contentOffset.y }
         set(value) { setContentOffset(.oy_init(oy_contentOffsetX, value), animated: true) }
     }
+    
+    /// Get and Set contentInset of UIScrollView
+    public var oy_contentInset: UIEdgeInsets {
+        get { contentInset }
+        set(value) { contentInset = value }
+    }
+
+    /// Get and Set contentInset Top of UIScrollView
+    public var oy_contentInsetTop: CGFloat {
+        get { contentInset.top }
+        set(value) {
+            contentInset = .oy_init(value, oy_contentInsetLeft, oy_contentInsetBottom, oy_contentInsetRight) }
+    }
+
+    /// Get and Set contentInset Bottom of UIScrollView
+    public var oy_contentInsetBottom: CGFloat {
+        get { contentInset.bottom }
+        set(value) { contentInset = .oy_init(oy_contentInsetTop, oy_contentInsetLeft, value, oy_contentInsetRight) }
+    }
+    
+    /// Get and Set contentInset Left of UIScrollView
+    public var oy_contentInsetLeft: CGFloat {
+        get { contentInset.left }
+        set(value) { contentInset = .oy_init(oy_contentInsetTop, value, oy_contentInsetBottom, oy_contentInsetRight) }
+    }
+    
+    /// Get and Set contentInset Right of UIScrollView
+    public var oy_contentInsetRight: CGFloat {
+        get { contentInset.right }
+        set(value) { contentInset = .oy_init(oy_contentInsetTop, oy_contentInsetLeft, oy_contentInsetBottom, value) }
+    }
 
     /// Set UIScrollView contentOffset
     /// - Parameters:

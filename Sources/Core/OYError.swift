@@ -61,4 +61,7 @@ public enum OYError: Error {
     
     /// User denies authorization to access tracking
     case advertisingTrackingIsNotEnabled
+    
+    /// Permission could not be declared
+    case permissionError
 }

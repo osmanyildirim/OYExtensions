@@ -57,6 +57,12 @@ extension UIButton: OYInit {
         get { titleColor(for: .selected) }
         set(value) { setTitleColor(value, for: .selected) }
     }
+    
+    /// Get and Set title font  for UIButton
+    public var oy_titleFont: UIFont? {
+        get { titleLabel?.font }
+        set(value) { titleLabel?.font = value }
+    }
 
     /// Get and Set background color of `normal` state for UIButton
     public var oy_backgroundColorForNormal: UIColor? {

@@ -24,9 +24,11 @@ import UIKit
 public final class OYLongPressGesture: UILongPressGestureRecognizer, OYBaseGesture {
     private var longPressAction: (() -> Void)?
 
-    public convenience init(completion: (() -> Void)?) {
+    public convenience init(minimumPressDuration: CGFloat = 0.3, completion: (() -> Void)?) {
         self.init()
         longPressAction = completion
+        
+        self.minimumPressDuration = minimumPressDuration
         addTarget(self, action: #selector(didLongPress(_:)))
     }
 

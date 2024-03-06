@@ -17,12 +17,18 @@ extension UILabel: OYInit {
         return label
     }
 
+    /// Get and Set text color of UILabel
+    public var oy_textColor: UIColor? {
+        get { textColor }
+        set(value) { textColor = value }
+    }
+    
     /// Set text with animation
     /// - Parameters:
     ///   - text: Text
     ///   - animated: if the should be animated
     ///   - duration: animation duration
-    public func oy_setText(_ text: String, animated: Bool = true, duration: TimeInterval = 0.5) {
+    public func oy_set(text: String?, animated: Bool = true, duration: TimeInterval = 0.5) {
         self.text = text
 
         guard animated else { return }
@@ -32,6 +38,18 @@ extension UILabel: OYInit {
         animation.type = .fade
         animation.duration = duration
         layer.add(animation, forKey: CATransitionType.fade.rawValue)
+    }
+    
+    /// Get and Set font of UILabel
+    public var oy_font: UIFont? {
+        get { font }
+        set(value) { font = value }
+    }
+    
+    /// Get and Set text alignment of UILabel
+    public var oy_textAlignment: NSTextAlignment {
+        get { textAlignment }
+        set(value) { textAlignment = value }
     }
 
     /// Estimated size of UILabel
@@ -84,5 +102,17 @@ extension UILabel: OYInit {
             attributedString.addAttribute(NSAttributedString.Key.kern, value: value, range: NSRange(location: 0, length: attributedString.length))
             attributedText = attributedString
         }
+    }
+    
+    /// Spaces between lines
+    /// - Parameter linesSpace: space value
+    public func oy_set(linesSpace: CGFloat) {
+        guard let text else { return }
+        let textAlignment = textAlignment
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineSpacing = linesSpace
+        let attributedString = NSAttributedString(string: text, attributes: [.paragraphStyle: paragraphStyle])
+        self.attributedText = attributedString
+        self.textAlignment = textAlignment
     }
 }

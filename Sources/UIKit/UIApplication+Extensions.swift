@@ -17,9 +17,14 @@ import UIKit
 #endif
 
 extension UIApplication {
-    /// `UIApplication.oy_badgeCount` → output → 2
+    /// Get and Set application icon Badge number
     public static var oy_badgeCount: Int {
-        UIApplication.shared.applicationIconBadgeNumber
+        get {
+            UIApplication.shared.applicationIconBadgeNumber
+        }
+        set(value) {
+            UIApplication.shared.applicationIconBadgeNumber = value
+        }
     }
     
     /// Request user tracking authorization with a completion handler returning the user's authorization status.
@@ -142,10 +147,14 @@ extension UIApplication {
     /// `UIApplication.oy_keyWindow` → output → <UIWindowLayer: 0x6000002dc630>
     public static var oy_keyWindow: UIWindow? {
         if #available(iOS 13.0, *) {
-            return UIApplication.shared.connectedScenes.filter { $0.activationState == .foregroundActive }
-                                                       .first(where: { $0 is UIWindowScene })
-                                                       .flatMap({ $0 as? UIWindowScene })?.windows
-                                                       .first(where: \.isKeyWindow)
+            let keyWindow = UIApplication.shared.connectedScenes.filter { $0.activationState == .foregroundActive }
+                                                                .first(where: { $0 is UIWindowScene })
+                                                                .flatMap({ $0 as? UIWindowScene })?.windows
+                                                                .first(where: \.isKeyWindow)
+            guard let keyWindow else {
+                return UIApplication.shared.windows.filter { $0.isKeyWindow }.first
+            }
+            return keyWindow
         } else {
             return UIApplication.shared.keyWindow
         }
@@ -186,20 +195,15 @@ extension UIApplication {
     
     /// `UIApplication.oy_topViewController()` → output → <UINavigationController: 0x13f81f600>
     private static func oy_topViewController(base: UIViewController? = UIViewController.oy_root) -> UIViewController? {
-        var topViewController: UIViewController?
-
-        if base == nil {
-            return oy_topViewController(base: UIViewController.oy_root)
-        }
-        
         if let navigationController = base as? UINavigationController {
-            topViewController = oy_topViewController(base: navigationController.visibleViewController)
+            return oy_topViewController(base: navigationController.visibleViewController)
         } else if let tabBarController = base as? UITabBarController, let selectedViewController = tabBarController.selectedViewController {
-            topViewController = oy_topViewController(base: selectedViewController)
+            return oy_topViewController(base: selectedViewController)
+        } else if let presented = base?.presentedViewController {
+            return presented
         } else {
-            return base?.presentedViewController ?? base
+            return base
         }
-        return topViewController
     }
 
     /// `UIApplication.oy_observeScreenShot { }`
@@ -238,6 +242,11 @@ extension UIApplication {
             closure?(.failure(.iconNotFound))
         }
     }
+    
+    /// `UIApplication.oy_resetAppIcon()`
+    public static func oy_resetAppIcon() {
+        UIApplication.shared.setAlternateIconName(nil)
+    }
 
     /// `UIApplication.oy_isReachable` → output → true
     public static var oy_isReachable: Bool {
@@ -252,6 +261,12 @@ extension UIApplication {
             var flags = SCNetworkReachabilityFlags() as SCNetworkReachabilityFlags?,
             SCNetworkReachabilityGetFlags(defaultRouteReachability, &flags) else { return false }
         return flags.contains(.reachable) && !flags.contains(.connectionRequired)
+    }
+    
+    /// Clears the LaunchScreen cache
+    /// `UIApplication.oy_clearLaunchScreenCache`
+    func oy_clearLaunchScreenCache() {
+        try? FileManager.default.removeItem(atPath: NSHomeDirectory() + "/Library/SplashBoard")
     }
 
     /// `UIApplication.oy_openSafari(url: URL(string: "http://www.apple.com"))`

@@ -44,8 +44,8 @@ extension NSAttributedString {
 }
 
 extension NSMutableAttributedString {
-    /// Apply font attribute
-    func oy_applyFont(_ font: UIFont) {
+    /// Set font attribute
+    func oy_set(font: UIFont) {
         let base = font.fontDescriptor
         let range = NSRange(location: 0, length: length)
         beginEditing()
@@ -58,5 +58,11 @@ extension NSMutableAttributedString {
             addAttribute(.font, value: fontValue, range: range)
         }
         endEditing()
+    }
+    
+    func oy_set(textAlignment: NSTextAlignment) {
+        let paragraph = NSMutableParagraphStyle()
+        paragraph.alignment = textAlignment
+        addAttribute(.paragraphStyle, value: paragraph, range: NSRange(location: 0, length: length))
     }
 }

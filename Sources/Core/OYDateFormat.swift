@@ -13,6 +13,9 @@ public enum OYDateFormat {
     
     /// `dd-MM-yyyy`
     case short
+    
+    /// `dd.MM.yy`
+    case shortest
 
     /// `dd.MM.yyyy`
     case shortDot
@@ -53,6 +56,7 @@ extension OYDateFormat {
         switch self {
         case .`default`: return "dd.MM.yyyy HH:mm:ss"
         case .short: return "dd-MM-yyyy"
+        case .shortest: return "dd.MM.yy"
         case .shortDot: return "dd.MM.yyyy"
         case .time: return "HH:mm:ss"
         case .isoYear: return "yyyy"

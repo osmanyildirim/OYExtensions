@@ -15,6 +15,11 @@ extension Data {
     public func oy_decode<T: Decodable>(decoder: JSONDecoder = JSONDecoder()) throws -> T {
         try decoder.decode(T.self, from: self)
     }
+    
+    /// `data.oy_decode(with: nil)`
+    public func oy_decode<T: Decodable>(with decoder: JSONDecoder?) -> T? {
+        try? (decoder ?? JSONDecoder()).decode(T.self, from: self)
+    }
 
     /// `data.oy_string()`
     public func oy_string(encoding: String.Encoding = .utf8) -> String? {

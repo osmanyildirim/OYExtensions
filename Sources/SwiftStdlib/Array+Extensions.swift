@@ -16,7 +16,7 @@ extension Array {
     /// `[1, 2, 3, 4, 1].oy_item(at: 2)` → output → 3
     /// `[1, 2, 3, 4, 1].oy_item(at: 9)` → output → nil
     public func oy_item(at index: Int) -> Element? {
-        if Int(index) >= count {
+        guard count > index else {
             return nil
         }
         return self[index]
@@ -49,12 +49,12 @@ extension Array {
         enumerated().filter { indexSet.contains($0.offset) }.map(\.element)
     }
     
-    /// `["a", "b", "c", "d"].prefix(2)` → output → ["a", "b"]
+    /// `["a", "b", "c", "d"].oy_items(prefix: 2)` → output → ["a", "b"]
     public func oy_items(prefix: Int) -> [Element] {
         Array(self.prefix(prefix))
     }
     
-    /// `["a", "b", "c", "d"].prefix(2)` → output → ["c", "d"]
+    /// `["a", "b", "c", "d"].oy_items(suffix: 2)` → output → ["c", "d"]
     public func oy_items(suffix: Int) -> [Element] {
         Array(self.suffix(suffix))
     }
@@ -298,6 +298,16 @@ extension Array {
         guard count > 0 else { return nil }
         let index = Int.random(in: 0..<count)
         return self[index]
+    }
+    
+    /// `[1, 2, 3, 4, 5].oy_shuffle()` → output → [3, 4, 1, 5, 2]
+    public mutating func oy_shuffle() {
+        self.shuffle()
+    }
+    
+    /// `[1, 2, 3, 4, 5].oy_shuffled` → output → [3, 4, 1, 5, 2]
+    public var oy_shuffled: Self {
+        return shuffled()
     }
 
     /// struct Person {

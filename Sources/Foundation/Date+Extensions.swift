@@ -270,10 +270,10 @@ extension Date {
     }
     
     /// date1 is "03.02.2023 12:45"
-    /// `date1.start(of: .year)` → output → "01.01.2023 00:00:00"
-    /// `date1.start(of: .month)` → output → "01.02.2023 00:00:00"
-    /// `date1.start(of: .hour)` → output → "03.02.2023 12:00:00"
-    /// `date1.start(of: .minute)` → output → "03.02.2023 12:45:00"
+    /// `date1.oy_start(of: .year)` → output → "01.01.2023 00:00:00"
+    /// `date1.oy_start(of: .month)` → output → "01.02.2023 00:00:00"
+    /// `date1.oy_start(of: .hour)` → output → "03.02.2023 12:00:00"
+    /// `date1.oy_start(of: .minute)` → output → "03.02.2023 12:45:00"
     public func oy_start(of component: Calendar.Component) -> Date {
         if component == .day {
             return Calendar.current.startOfDay(for: self)
@@ -295,11 +295,11 @@ extension Date {
     }
     
     /// date1 is "03.02.2023 12:45"
-    /// `date1.start(of: .year)` → output → "31.12.2023 23:59:59"
-    /// `date1.start(of: .month)` → output → "29.02.2023 23:59:59"
-    /// `date1.start(of: .hour)` → output → "03.02.2023 12:59:59"
-    /// `date1.start(of: .minute)` → output → "03.02.2023 12:45:59"
-    public func end(of component: Calendar.Component) -> Date {
+    /// `date1.oy_end(of: .year)` → output → "31.12.2023 23:59:59"
+    /// `date1.oy_end(of: .month)` → output → "29.02.2023 23:59:59"
+    /// `date1.oy_end(of: .hour)` → output → "03.02.2023 12:59:59"
+    /// `date1.oy_end(of: .minute)` → output → "03.02.2023 12:45:59"
+    public func oy_end(of component: Calendar.Component) -> Date {
         let date = oy_start(of: component)
         var components: DateComponents? {
             switch component {
@@ -441,7 +441,7 @@ extension Date {
 
 extension String {
     /// `"17-05-2023".oy_date(format: .short)` → output → (Date) $R0 = 2023-05-17 00:00:00 UTC
-    public func oy_date(format: OYDateFormat = .default) -> Date {
-        format.dateFormatter.date(from: self) ?? Date()
+    public func oy_date(format: OYDateFormat = .default) -> Date? {
+        format.dateFormatter.date(from: self)
     }
 }

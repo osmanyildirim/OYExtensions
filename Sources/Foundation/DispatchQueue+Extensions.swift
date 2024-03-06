@@ -20,7 +20,7 @@ extension DispatchQueue {
 
     /// `DispatchQueue.oy_asyncOnMain { }`
     public static func oy_asyncOnMain(_ execute: @escaping @convention(block) () -> Void) {
-        if pthread_main_np() != 0 {
+        if oy_isMainQueue {
             execute()
         } else {
             DispatchQueue.main.async(execute: execute)
@@ -29,7 +29,7 @@ extension DispatchQueue {
 
     /// `DispatchQueue.oy_syncOnMain { }`
     public static func oy_syncOnMain(_ execute: @escaping @convention(block) () -> Void) {
-        if pthread_main_np() != 0 {
+        if oy_isMainQueue {
             execute()
         } else {
             DispatchQueue.main.sync(execute: execute)

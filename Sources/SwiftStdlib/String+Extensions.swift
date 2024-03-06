@@ -291,12 +291,22 @@ extension String {
         NSLocalizedString(self, comment: "")
     }
 
-    /// `"<p><span style="color: #ad2131;">Sample</span></p>".oy_htmlToAttributedString`
-    public var oy_htmlToAttributedString: NSAttributedString? {
-        guard let data = data(using: .utf8) else {
-            return nil
+    /// `"<p><span style=\"color: #ad2131;\">Sample</span></p>".oy_htmlToAttributedString(font: allCustomFont, textAlignment: .natural)`
+    public func oy_htmlToAttributedString(font: UIFont? = nil, textAlignment: NSTextAlignment = .natural) -> NSAttributedString? {
+        guard let data = data(using: .utf8) else { return NSMutableAttributedString() }
+        do {
+            let attributedString = try NSMutableAttributedString(data: data,
+                                                                 options: [.documentType: NSAttributedString.DocumentType.html,
+                                                                           .characterEncoding: String.Encoding.utf8.rawValue],
+                                                                 documentAttributes: nil)
+            guard let font else { return attributedString }
+            attributedString.oy_set(font: font)
+            attributedString.oy_set(textAlignment: textAlignment)
+
+            return attributedString
+        } catch {
+            return NSMutableAttributedString()
         }
-        return try? NSAttributedString(data: data, options: [.documentType: NSAttributedString.DocumentType.html, .characterEncoding: String.Encoding.utf8.rawValue], documentAttributes: nil)
     }
 
     /// `"hello world".oy_upperFirst` → output → "Hello world"
@@ -549,23 +559,6 @@ extension String {
         allSatisfy({ $0.oy_isEmoji })
     }
     
-    /// Convert string to html
-    /// `#"<h1 style="color: #ad2131;">Hello World</h1>"#.oy_convertToHtml(font: UIFont(name: "HelveticaNeue", size: 18))`
-    public func oy_convertToHtml(font: UIFont? = nil) -> NSMutableAttributedString {
-        guard let data = data(using: .utf8) else { return NSMutableAttributedString() }
-        do {
-            let attributedString = try NSMutableAttributedString(data: data, options: [NSAttributedString.DocumentReadingOptionKey.documentType:
-                                                                                        NSAttributedString.DocumentType.html,
-                                                                                       NSAttributedString.DocumentReadingOptionKey.characterEncoding: String.Encoding.utf8.rawValue],
-                                                                 documentAttributes: nil)
-            guard let font else { return attributedString }
-            attributedString.oy_applyFont(font)
-            return attributedString
-        } catch {
-            return NSMutableAttributedString()
-        }
-    }
-
     /// Encrypts plain String with the given key using AES.GCM and returns a base64 encoded encrypted data
     /// `let key = SymmetricKey(size: .bits256)`
     /// `try? "Hello World".encrypted(key: SymmetricKey(size: .bits256))` → output → "aDhmrk8N8i6Bmi9jYycRTm+V46B4LKPe8EAOYR/FUEKrLpKYBmQa"
@@ -591,5 +584,20 @@ extension String {
             throw OYError.dataToStringFailed
         }
         return string
+    }
+    
+    /// `"Hello World".oy_sha256Value`→ output → "a591a6d40bf420404a011733cfb7b190d62c65bf0bcda32b57b277d9ad9f146e"
+    public var oy_sha256Value: String {
+        let inputData = Data(self.utf8)
+        if #available(iOS 13.0, *) {
+            let hashedData = SHA256.hash(data: inputData)
+            let hashString = hashedData.compactMap {
+                String(format: "%02x", $0)
+            }.joined()
+
+            return hashString
+        } else {
+            return self
+        }
     }
 }
