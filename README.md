@@ -129,6 +129,14 @@ let package = Package(
 </details>
 
 <details>
+<summary>SwiftUI Extensions</summary>
+<ul>
+<li><a href="https://github.com/osmanyildirim/OYExtensions/blob/main/SwiftUI/UIView%2BPreview.swift"><code>UIView Preview</code></a></li>
+<li><a href="https://github.com/osmanyildirim/OYExtensions/blob/main/SwiftUI/UIViewController%2BPreview.swift"><code>UIViewController Preview</code></a></li>
+</ul>
+</details>
+
+<details>
 <summary>UIGestureRecognizer Extensions</summary>
 <ul>
 <li><a href="https://github.com/osmanyildirim/OYExtensions/blob/main/Sources/Gesture/OYLongPressGesture.swift"><code>LongPressGesture extensions</code></a></li>
