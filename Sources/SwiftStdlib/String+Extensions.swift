@@ -76,16 +76,17 @@ extension String {
         self = oy_replace(ofs: ofs, with: with)
     }
     
-    /// var value = "Hello World. I am a iOS Developer."
-    /// `"ğşçö".oy_occurrencesReplace()` → output → "gsco"
-    public func oy_occurrencesReplace() -> Self {
-        folding(options: .diacriticInsensitive, locale: Locale(identifier: "en")) // "gsco"
+    /// Replace diacritics (e.g Turkish characters)
+    /// `"ğşçö".oy_diacriticssReplace()` → output → "gsco"
+    public func oy_diacriticsReplace() -> Self {
+        folding(options: .diacriticInsensitive, locale: .current)
     }
 
+    /// Mutate diacritics (e.g Turkish characters)
     /// var value = "ğşçö"
-    /// `value.oy_occurrencesReplaced()` → output → "gsco"
-    public mutating func oy_occurrencesReplaced() {
-        self = folding(options: .diacriticInsensitive, locale: Locale(identifier: "en")) // "gsco"
+    /// `value.oy_diacriticsReplaced()` → output → "gsco"
+    public mutating func oy_diacriticsReplaced() {
+        self = folding(options: .diacriticInsensitive, locale: .current)
     }
 
     /// `"Hello World".oy_remove(string: "World")` → output →  "Hello "
@@ -540,11 +541,27 @@ extension String {
         compare(version, options: .numeric) == .orderedAscending
     }
 
-    /// `"github.com lorem ipsum twitter.com".oy_detectUrls()`  → output → [http://github.com, http://twitter.com] }
-    public func oy_detectUrls() -> [URL]? {
+    /// `"github.com lorem ipsum twitter.com".oy_detectUrls`  → output → [http://github.com, http://twitter.com]
+    public var oy_detectUrls: [URL]? {
         let urlDetector = try? NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
         let matches = urlDetector?.matches(in: self, options: [], range: NSRange(location: 0, length: utf16.count))
         return matches?.compactMap({ $0.url })
+    }
+    
+    /// `"19111 Pruneridge Avenue Cupertino / (555) 555-1234".oy_detectAdresses`  → output → ["123 Main St."]
+    public var oy_detectAdresses: [String]? {
+        let addressDetector = try? NSDataDetector(types: NSTextCheckingResult.CheckingType.address.rawValue)
+        let matches = addressDetector?.matches(in: self, options: [], range: NSRange(location: 0, length: utf16.count))
+        let addresses = matches?.map({ (self as NSString).substring(with: $0.range) })
+        return addresses
+    }
+    
+    /// `"19111 Pruneridge Avenue Cupertino / (555) 555-1234".oy_detectPhoneNumbers`  → output → ["(555) 555-1234"]
+    public var oy_detectPhoneNumbers: [String]? {
+        let addressDetector = try? NSDataDetector(types: NSTextCheckingResult.CheckingType.phoneNumber.rawValue)
+        let matches = addressDetector?.matches(in: self, options: [], range: NSRange(location: 0, length: utf16.count))
+        let addresses = matches?.map({ (self as NSString).substring(with: $0.range) })
+        return addresses
     }
 
     /// `"💻".oy_isEmoji`→ output → true

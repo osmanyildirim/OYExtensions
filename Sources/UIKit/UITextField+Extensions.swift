@@ -16,6 +16,18 @@ extension UITextField: OYInit {
         textField.text = text
         return textField
     }
+    
+    /// Get and Set text alignment for UITextField
+    public var oy_textAlignment: NSTextAlignment {
+        get { textAlignment }
+        set(value) { textAlignment = value  }
+    }
+    
+    /// Get and Set cursor color for UITextField
+    public var oy_custorColor: UIColor {
+        get { UITextField.appearance().tintColor }
+        set(value) { UITextField.appearance().tintColor = value  }
+    }
 
     /// Get and Set left padding for UITextField
     public var oy_leftPadding: CGFloat? {
@@ -105,7 +117,30 @@ extension UITextField: OYInit {
         keyboardToolbar.sizeToFit()
         inputAccessoryView = keyboardToolbar
     }
-
+    
+    /// Set cursor position to beginning of document
+    public func oy_setCursorToBeginning() {
+        selectedTextRange = self.textRange(from: self.beginningOfDocument, to: self.beginningOfDocument)
+    }
+    
+    /// Set cursor position to end of document
+    /// `textField.oy_setCursorPositionBy(text: "Ipsum")`
+    public func oy_setCursorToEnd() {
+        selectedTextRange = self.textRange(from: self.endOfDocument, to: self.endOfDocument)
+    }
+    
+    /// Set cursor position to selected offset
+    public func oy_setCursorPosition(after offset: Int) {
+        guard let position = self.position(from: self.beginningOfDocument, offset: offset) else { return }
+        selectedTextRange = self.textRange(from: position, to: position)
+    }
+    
+    public func oy_setCursorPositionBy(text: String) {
+        guard let index = self.text?.oy_indexOf(text) else { return }
+        let count = text.count
+        oy_setCursorPosition(after: index + count)
+    }
+    
     /// Done button position
     public enum DoneButtonPosition {
         case left

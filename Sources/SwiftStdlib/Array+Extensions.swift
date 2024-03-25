@@ -48,6 +48,30 @@ extension Array {
     public func oy_items(indexSet: IndexSet) -> [Element] {
         enumerated().filter { indexSet.contains($0.offset) }.map(\.element)
     }
+
+    /// `["a", "b", "c", "d"].oy_items(from: 2)` → output → ["c", "d"]`
+    public func oy_items(from: Int) -> SubSequence {
+        let partialRangeFrom = from...
+        return self[partialRangeFrom]
+    }
+    
+    /// `["a", "b", "c", "d"].oy_items(through: 2)` → output → ["a", "b", "c"]`
+    public func oy_items(through: Int) -> SubSequence {
+        let partialRangeThrough = ...through
+        return self[partialRangeThrough]
+    }
+    
+    /// `["a", "b", "c", "d"].oy_items(upTo: 2)` → output → ["a", "b"]`
+    public func oy_items(upTo: Int) -> SubSequence {
+        let partialRangeUpTo = ..<upTo
+        return self[partialRangeUpTo]
+    }
+    
+    /// `["a", "b", "c", "d", "e"].oy_items(from: 1, to: 3)` → output → ["b", "c", "d"]`
+    public func oy_items(from: Int, to: Int) -> SubSequence {
+        let closedRange = from...to
+        return self[closedRange]
+    }
     
     /// `["a", "b", "c", "d"].oy_items(prefix: 2)` → output → ["a", "b"]
     public func oy_items(prefix: Int) -> [Element] {
@@ -179,12 +203,12 @@ extension Array {
         }
     }
     
-    /// `[3, 1, 2].oy_split(by: 3)`→ output → [1, ,2 , 3]
+    /// `[3, 1, 2].oy_sortAscending()`→ output → [1, ,2 , 3]
     public func oy_sortAscending() -> Self where Element: Comparable {
         sorted { lhs, rhs in lhs < rhs }
     }
 
-    /// `[3, 1, 2].oy_split(by: 3)`→ output → [3, ,2 , 1]
+    /// `[3, 1, 2].oy_sortDescending()`→ output → [3, ,2 , 1]
     public func oy_sortDescending() -> Self where Element: Comparable {
         sorted { lhs, rhs in lhs > rhs }
     }

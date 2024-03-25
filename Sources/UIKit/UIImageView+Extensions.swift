@@ -117,4 +117,12 @@ extension UIImageView: OYInit {
             self.image = image
         }, completion: nil)
     }
+    
+    /// Decodes an image synchronously and provides a new one for display in views and animations
+    /// - Parameter image: image
+    @available(iOS 15.0, *) public func oy_prepareForDisplay(image: UIImage) {
+        Task {
+            self.image = await image.byPreparingForDisplay()
+        }
+    }
 }
