@@ -70,7 +70,7 @@ extension Bundle {
     /// `Bundle.main.oy_appBuildNumber`→ output → "1"
     public var oy_appBuildNumber: String? { oy_infoPlistValue(key: "CFBundleVersion") as? String }
 
-    /// `Bundle.main.oy_bundleIdentifier`→ output → "com.osmanyildirim.oyExtensions"
+    /// `Bundle.main.oy_bundleIdentifier`→ output → "com.oy.oyExtensions"
     public var oy_bundleIdentifier: String? { oy_infoPlistValue(key: "CFBundleIdentifier") as? String }
 
     /// `Bundle.main.oy_isRunningOnSimulator`→ output → true

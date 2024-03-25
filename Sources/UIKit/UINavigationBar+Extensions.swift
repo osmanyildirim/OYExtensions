@@ -58,4 +58,19 @@ extension UINavigationBar {
             isTranslucent = value
         }
     }
+
+    /// Navigation bar set to transparent
+    /// `navigationController?.navigationBar.oy_setTransparent()`
+    public func oy_setTransparent() {
+        if #available(iOS 13.0, *) {
+            let appearance = UINavigationBarAppearance()
+            appearance.configureWithTransparentBackground()
+            UINavigationBar.appearance().standardAppearance = appearance
+        } else {
+            UINavigationBar.appearance().setBackgroundImage(UIImage(), for: .default)
+            UINavigationBar.appearance().shadowImage = UIImage()
+            UINavigationBar.appearance().oy_backgroundColor = .red//.clear
+            UINavigationBar.appearance().oy_isTranslucent = true
+        }
+    }
 }
